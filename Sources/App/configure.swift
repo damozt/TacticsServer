@@ -26,7 +26,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
         password: "lightningstab"
     )
     services.register(postgreSQLConfig)
-    let postgreSQL = try PostgreSQLDatabase(config: postgreSQLConfig)
+//    let postgreSQL = try PostgreSQLDatabase(config: postgreSQLConfig)
     
     /// Register the configured PostgreSQL database to the database config.
 //    var databases = DatabasesConfig()

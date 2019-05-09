@@ -13,14 +13,14 @@ final class UserController {
     
     func getUser(_ req: Request) throws -> Future<User> {
         
-        guard let bearer = req.http.headers.bearerAuthorization, let firebaseUser = try firebaseUser(withToken: bearer.token) else {
+        guard let bearer = req.http.headers.bearerAuthorization, let firebaseUser = try userId(withToken: bearer.token) else {
             throw Abort(.unauthorized)
         }
         
         let thing = req.withPooledConnection(to: .psql) { conn in
             return conn.raw("select * from users where id = '\(firebaseUser.sub)'").all(decoding: User.self)
         }
-        
+
         return thing.map { users in
             guard users.count == 1 else { throw Abort(.internalServerError) }
             return users[0]
@@ -28,10 +28,19 @@ final class UserController {
     }
 }
 
-func firebaseUser(withToken token: String) throws -> FirebaseUser? {
+func userId(withToken token: String) throws -> FirebaseUser? {
     
-    let certificate = "-----BEGIN CERTIFICATE-----\nMIIDHDCCAgSgAwIBAgIIUMP42NVztVgwDQYJKoZIhvcNAQEFBQAwMTEvMC0GA1UE\nAxMmc2VjdXJldG9rZW4uc3lzdGVtLmdzZXJ2aWNlYWNjb3VudC5jb20wHhcNMTkw\nNDI2MjEyMDUxWhcNMTkwNTEzMDkzNTUxWjAxMS8wLQYDVQQDEyZzZWN1cmV0b2tl\nbi5zeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbTCCASIwDQYJKoZIhvcNAQEBBQAD\nggEPADCCAQoCggEBAJNqQOgxyrXbV2GoD5JI5DzFJBFFaQJ5BCdcSRl2L1TKQ8OK\nXOzvf/nu+hHblTWMmyHDS1jI4dvGdttI/sua7RaeVcXFFaY3UDWspY8vlsc3cuam\npH1NYYTGh0xDquKdmwytjdVpJQ0TW8LrJKuB0OzToyl/IdbgU4F6av/fO1AAosV9\n5RNQ7Y2XjI93yKFmPThXLCo1F0eGlpX2bWbXE7KIBjgsyDIBcL7rBAjvfrLv8oX7\nI4XV3YM3Wq/JbbseQ3coircKMo7j3Cfzax9XwZjpz8kTSkwVhDcS4+7gSx/aBQAs\n6F9NG0+2NDfdBigRwOHpPzc8WfzWHSco/mWY1f0CAwEAAaM4MDYwDAYDVR0TAQH/\nBAIwADAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwIwDQYJ\nKoZIhvcNAQEFBQADggEBABSpUhzrpTth+G5y/+5qPWT43v/NgD7qMFVgbcjy0gNl\n0scae+M7c/J8WzX2EOIhETnItvgo/mYihDeACHTqApeDXGczL88gpT1hjPdfm3Qi\niyFBUc+N4XR4nMreyC51nYJWPjMvPFDv0HxmgTMq2W7QyOKOFjDPxTJj42V9OL+M\nkCuNCssMVOIjmxDmQ4ig1Ni4IVovhZOsTswbzmq20I0Aqnp0iH/LyUG6e2zr1i1u\ngz+xjswyRRl1WrF9HSuoihVgRwXSjHSkMIG33k3sb2KYvk5rHhuCML8UnPyG6vv0\n7B6GEvTEKYEQ7Rvkp6DR07uLtCJk2TxxrGO8j/CLayw=\n-----END CERTIFICATE-----"
-    let firebaseUser = try JWT<FirebaseUser>(from: token, verifiedUsing: .rs256(key: .public(certificate: certificate))).payload
+    let decoded = JWTDecoder().decode2(jwtToken: token)
+    guard
+//        let headerData = decoded[0],
+        let payloadData = decoded[1] else {
+        throw Abort(.unauthorized, reason: "Invalid token")
+    }
+    
+    let firebaseUser = try JSONDecoder().decode(FirebaseUser.self, from: payloadData)
+    
+//    let certificate = "-----BEGIN CERTIFICATE-----\nMIIDHDCCAgSgAwIBAgIIWtSKoLQPMUQwDQYJKoZIhvcNAQEFBQAwMTEvMC0GA1UE\nAxMmc2VjdXJldG9rZW4uc3lzdGVtLmdzZXJ2aWNlYWNjb3VudC5jb20wHhcNMTkw\nNTA0MjEyMDUxWhcNMTkwNTIxMDkzNTUxWjAxMS8wLQYDVQQDEyZzZWN1cmV0b2tl\nbi5zeXN0ZW0uZ3NlcnZpY2VhY2NvdW50LmNvbTCCASIwDQYJKoZIhvcNAQEBBQAD\nggEPADCCAQoCggEBAMetajqTxyFJduJc2qyK+uA8ON6ST5sL2/ujzL+7QZtu+17f\nQFZggvpOScyO152g0JOlTJkts0yHedxm9Ijr085v7GmSxzO7dm+g3gP1t0lxa8dr\nCHDpLBIpQG4qP+GyJtnWM3wEpu7XZ4bJPtiWZsgEb6sWxGJ7iXryZc+SWG8vH75/\nsMdZw4jwNyewsa11b054dLyywPVoH0BT1eDL0oXq+GB18wiWeL+13CBYMr9EIFDz\norNG6bP/LYfJNbudlcUi1CMDX4imXSp0d6LEITMdwzGk6yg3s39BGH3AqJqBhFO0\nDTDv6dDKAmC5u3OGm+oXiPhKtoocDOkoHevMndcCAwEAAaM4MDYwDAYDVR0TAQH/\nBAIwADAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwIwDQYJ\nKoZIhvcNAQEFBQADggEBALD1mBXBIemcICDhmj3zgTY6RU7Xe7TWMn8Duszgmffh\n974AtYsshiDGrGxW96gIZdGZqs9djmQDdsX6La/DKzWYsbsTn5sm+alzQE74UrU5\nJTLklcWEjn9ztqVirIpj9gn4OQDNrnQPlGZcXcJffd5dQaZt+eZNLIBfNeLss+OM\nMAPCoW46VlXVtaGi/Mwt/qX3Up4HkpKeh6Tr6+9NiFepBetgSzi1FReZc3e+GjxA\nctXGPMmvGnQB+XCNGHoNUNYuKHkgBCFQUsqxr1Bk3om5RxzKLXA1sZgleLMVNaTj\nWz7AlrZbotidBIiwL/ejCEczuN9e4xKnz25hL9ApQTk=\n-----END CERTIFICATE-----\n"
+//    let firebaseUser = try JWT<FirebaseUser>(from: token, verifiedUsing: .rs256(key: .public(certificate: certificate))).payload
     
     let now = Date()
     let projectId = "for-glory-tactics-dev"
@@ -47,14 +56,14 @@ func firebaseUser(withToken token: String) throws -> FirebaseUser? {
     if Date(timeIntervalSince1970: firebaseUser.exp) < now {
         throw Abort(.unauthorized, reason: "Token expired")
     }
-    
+
     if firebaseUser.aud != projectId {
         throw Abort(.unauthorized, reason: "Invalid Audience")
     }
-    
+
     if firebaseUser.iss != "https://securetoken.google.com/\(projectId)" {
         throw Abort(.unauthorized, reason: "Invalid Issuer")
     }
-    
+
     return firebaseUser
 }
