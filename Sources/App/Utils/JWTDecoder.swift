@@ -9,11 +9,6 @@ import Foundation
 
 class JWTDecoder {
     
-//    func decode(jwtToken jwt: String) -> [[String:Any]?] {
-//        let segments = jwt.components(separatedBy: ".")
-//        return segments.map { decodeJWTPart($0) }
-//    }
-    
     func decode2(jwtToken jwt: String) -> [Data?] {
         let segments = jwt.components(separatedBy: ".")
         return segments.map { base64UrlDecode($0) }
@@ -31,23 +26,4 @@ class JWTDecoder {
         }
         return Data(base64Encoded: base64, options: .ignoreUnknownCharacters)
     }
-    
-    private func decodeJWTPart(_ value: String) -> Data? {
-        return base64UrlDecode(value)
-//        guard let bodyData = base64UrlDecode(value),
-//            let json = try? JSONSerialization.jsonObject(with: bodyData, options: []), let payload = json as? [String: Any] else {
-//                return nil
-//        }
-        
-//        return payload
-    }
-    
-//    private func decodeJWTPart(_ value: String) -> [String: Any]? {
-//        guard let bodyData = base64UrlDecode(value),
-//            let json = try? JSONSerialization.jsonObject(with: bodyData, options: []), let payload = json as? [String: Any] else {
-//                return nil
-//        }
-//
-//        return payload
-//    }
 }
