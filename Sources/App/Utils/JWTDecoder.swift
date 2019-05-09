@@ -9,7 +9,7 @@ import Foundation
 
 class JWTDecoder {
     
-    func decode2(jwtToken jwt: String) -> [Data?] {
+    func decode(jwtToken jwt: String) -> [Data?] {
         let segments = jwt.components(separatedBy: ".")
         return segments.map { base64UrlDecode($0) }
     }

@@ -10,7 +10,7 @@ import Vapor
 
 struct User: Content {
     
-    var id: String
-    var name: String
-    var rating: Int
+    let id: String
+    let name: String
+    let rating: Int
 }

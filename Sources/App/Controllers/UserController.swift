@@ -12,13 +12,10 @@ import PostgreSQL
 final class UserController {
     
     func getUser(_ req: Request) throws -> Future<User> {
-        
-        guard let bearer = req.http.headers.bearerAuthorization, let user = try user(withToken: bearer.token) else {
-            throw Abort(.unauthorized)
-        }
+        guard let firebaseUser = try authenticate(req) else { throw Abort(.unauthorized) }
         
         return req.withPooledConnection(to: .psql) { conn in
-            return conn.raw("select * from users where id = '\(user.sub)'").all(decoding: User.self)
+            return conn.raw("select * from users where id = '\(firebaseUser.sub)'").all(decoding: User.self)
         }.map { users in
             guard users.count == 1 else { throw Abort(.internalServerError) }
             return users[0]
@@ -26,11 +23,9 @@ final class UserController {
     }
     
     func getAllUsers(_ req: Request) throws -> Future<[User]> {
-        let result = req.withPooledConnection(to: .psql) { conn in
+        return req.withPooledConnection(to: .psql) { conn in
             return conn.raw("select * from users").all(decoding: User.self)
-        }
-        
-        return result.map { users in
+        }.map { users in
             return users
         }
     }
@@ -45,13 +40,14 @@ final class UserController {
     }
 }
 
-//authenticate
-func user(withToken token: String) throws -> FirebaseUser? {
+func authenticate(_ req: Request) throws -> FirebaseUser? {
     
-    let decoded = JWTDecoder().decode2(jwtToken: token)
+    guard let bearer = req.http.headers.bearerAuthorization else { throw Abort(.unauthorized) }
+    
+    let decoded = JWTDecoder().decode(jwtToken: bearer.token)
     guard
 //        let headerData = decoded[0],
-        let payloadData = decoded[1] else {
+        let payloadData = decoded[1] else { //TODO: MAKE SAFE ARRAY INDEXING: decoded[safe: 1]
         throw Abort(.unauthorized, reason: "Invalid token")
     }
     
