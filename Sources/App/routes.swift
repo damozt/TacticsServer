@@ -9,7 +9,7 @@ public func routes(_ router: Router) throws {
     router.get("user", use: userController.getUser)
     router.get("user", "all", use: userController.getAllUsers)
     router.get("user", "search", use: userController.findUsersWithName)
-//    router.post("user", use: userController.createUser)
+    router.post(CreateUser.self, at: "user", use: userController.createUser)
     
     //GET       hero
     //POST      hero/create

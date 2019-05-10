@@ -1,10 +1,13 @@
 import PostgreSQL
+import FluentPostgreSQL
 import Vapor
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
+    
     // Register providers first
     try services.register(PostgreSQLProvider())
+    try services.register(FluentPostgreSQLProvider())
     
     // Register routes to the router
     let router = EngineRouter.default()
@@ -16,7 +19,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     middlewares.use(FileMiddleware.self)
     middlewares.use(ErrorMiddleware.self)
     services.register(middlewares)
-
+    
     // Configure a PostgreSQL database
     let postgreSQLConfig = PostgreSQLDatabaseConfig(
         hostname: "tactics.c811dm4vddhz.us-east-2.rds.amazonaws.com",
@@ -25,15 +28,17 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
         database: "tactics",
         password: "lightningstab"
     )
-    services.register(postgreSQLConfig)
+    let postgresql = PostgreSQLDatabase(config: postgreSQLConfig)
     
     /// Register the configured PostgreSQL database to the database config.
-//    var databases = DatabasesConfig()
-//    databases.add(database: postgresql, as: .psql)
-//    services.register(databases)
+    var databases = DatabasesConfig()
+    databases.add(database: postgresql, as: .psql)
+    services.register(databases)
 
     // Configure migrations
-//    var migrations = MigrationConfig()
-//    migrations.add(model: User.self, database: .psql)
-//    services.register(migrations)
+    var migrations = MigrationConfig()
+    migrations.add(migration: Battle.self, database: .psql)
+    migrations.add(migration: Hero.self, database: .psql)
+    migrations.add(model: User.self, database: .psql)
+    services.register(migrations)
 }

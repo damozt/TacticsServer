@@ -5,12 +5,30 @@
 //  Created by Kevin Damore on 5/7/19.
 //
 
-import Foundation
 import Vapor
+import FluentPostgreSQL
 
-struct User: Content {
+struct User: PostgreSQLModel, Migration, Content {
     
-    let id: String
+    var id: Int?
+    let firebaseId: String
     let name: String
-    let rating: Int
+    let mmr: Int
+}
+
+struct PublicUser: Content {
+    
+    let id: Int?
+    let name: String
+    let mmr: Int
+    
+    init(user: User) {
+        id = user.id
+        name = user.name
+        mmr = user.mmr
+    }
+}
+
+struct CreateUser: Content {
+    let name: String
 }

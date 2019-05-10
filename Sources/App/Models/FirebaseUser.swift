@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import Vapor
 import JWT
+import FluentPostgreSQL
 
 struct FirebaseUser: JWTPayload {
     
