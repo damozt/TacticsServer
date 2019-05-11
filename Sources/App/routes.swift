@@ -16,17 +16,16 @@ public func routes(_ router: Router) throws {
     router.get("battle", Int.parameter, use: battleController.getBattle)
     router.get("battle", "all", use: battleController.getAllBattles)
     router.post(CreateBattle.self, at: "battle", use: battleController.createBattle)
-    //PUT       battle/{battleId}/attackerTeamInit
-    //PUT       battle/{battleId}/defenderTeamInit
+    router.put(TeamInit.self, at: "battle", Int.parameter, "attackerInit", use: battleController.updateAttackerInit)
+    router.put(TeamInit.self, at: "battle", Int.parameter, "defenderInit", use: battleController.updateDefenderInit)
     
-    let turnController = TurnController()
-    router.get("turn", Int.parameter, use: turnController.getTurn)
-    router.get("turn", "battleId", Int.parameter, use: turnController.getTurnsForBattle)
-    router.post(CreateBattleTurn.self, at: "turn", use: turnController.createTurn)
+    let battleTurnController = BattleTurnController()
+    router.get("turn", "battleId", Int.parameter, use: battleTurnController.getTurnsForBattle)
+    router.post(CreateBattleTurn.self, at: "turn", use: battleTurnController.createTurn)
     
-    let actionController = ActionController()
-//    router.get("action", "turnId", Int.parameter, use: actionController.getAction)
-    router.post(CreateBattleAction.self, at: "action", use: actionController.createAction)
+    let battleActionController = BattleActionController()
+    router.get("action", "battleId", Int.parameter, use: battleActionController.getActionsForBattle)
+    router.post(CreateBattleAction.self, at: "action", use: battleActionController.createAction)
     
     //GET       challenge
     //GET       challenge/find

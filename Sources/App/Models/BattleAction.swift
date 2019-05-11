@@ -12,13 +12,14 @@ struct BattleAction: PostgreSQLModel {
     
     var id: Int?
     let turnId: Int
+    let battleId: Int
     let actionId: String
     let actionInfo: String
     let actionIndex: Int
     let actionType: Int
     
     static func newAction(from action: CreateBattleAction) -> BattleAction {
-        return BattleAction(id: nil, turnId: action.turnId, actionId: action.actionId, actionInfo: action.actionInfo, actionIndex: action.actionIndex, actionType: action.actionType)
+        return BattleAction(id: nil, turnId: action.turnId, battleId: action.battleId, actionId: action.actionId, actionInfo: action.actionInfo, actionIndex: action.actionIndex, actionType: action.actionType)
     }
 }
 
