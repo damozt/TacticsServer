@@ -5,9 +5,9 @@
 //  Created by Kevin Damore on 5/8/19.
 //
 
-import JWT
+import Foundation
 
-struct FirebaseUser: JWTPayload {
+struct FirebaseUser: Decodable {
     
     var iss: String
     var aud: String
@@ -17,7 +17,4 @@ struct FirebaseUser: JWTPayload {
     var exp: TimeInterval
     var email: String
     var email_verified: Bool
-    
-    func verify(using signer: JWTSigner) throws {
-    }
 }

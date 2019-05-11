@@ -46,11 +46,11 @@ extension Request {
             if Date(timeIntervalSince1970: firebaseUser.auth_time) > now {
                 throw Abort(.unauthorized, reason: "Invalid Auth time")
             }
-            
+        
             if Date(timeIntervalSince1970: firebaseUser.iat) > now {
                 throw Abort(.unauthorized, reason: "Invalid Issued-at time")
             }
-        //
+        
         //    if Date(timeIntervalSince1970: firebaseUser.exp) < now {
         //        throw Abort(.unauthorized, reason: "Token expired")
         //    }

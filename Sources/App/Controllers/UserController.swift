@@ -17,18 +17,19 @@ final class UserController {
         let users = User.query(on: req).filter(\.firebaseId, .equal, firebaseUser.sub).all()
         
         return users.map { users in
+            guard users.count > 0 else { throw Abort(.noContent, reason: "No users found.") }
             guard users.count == 1 else { throw Abort(.internalServerError) }
-            return PublicUser(user: users[0])
+            return users[0].publicUser
         }
     }
     
     func getAllUsers(_ req: Request) throws -> Future<[PublicUser]> {
-        return User.query(on: req).all().map { $0.map { PublicUser(user: $0) } }
+        return User.query(on: req).all().map { $0.map { $0.publicUser } }
     }
     
     func findUsersWithName(_ req: Request) throws -> Future<[PublicUser]> {
         let name = try req.query.get(String.self, at: "name")
-        return User.query(on: req).filter(\.name, .ilike, name).all().map { $0.map { PublicUser(user: $0) } }
+        return User.query(on: req).filter(\.name, .ilike, name).all().map { $0.map { $0.publicUser } }
     }
     
     func createUser(_ req: Request, data: CreateUser) throws -> Future<PublicUser> {
@@ -39,7 +40,7 @@ final class UserController {
         
         let user = User(id: nil, firebaseId: firebaseUser.sub, name: data.name, mmr: 1000)
         return user.save(on: req).map { newUser in
-            return PublicUser(user: newUser)
+            return newUser.publicUser
         }
     }
 }

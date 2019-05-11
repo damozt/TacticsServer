@@ -13,17 +13,20 @@ public func routes(_ router: Router) throws {
     //POST      hero/create
     
     let battleController = BattleController()
+    router.get("battle", Int.parameter, use: battleController.getBattle)
+    router.get("battle", "all", use: battleController.getAllBattles)
     router.post(CreateBattle.self, at: "battle", use: battleController.createBattle)
-    //GET       battle
-    //GET       battle/all
-    //GET       battle/{battleId}
-    //POST      battle/create
-    //GET       battle/{battleId}/turn
-    //POST      battle/{battleId}/turn/create
-    //GET       battle/{battleId}/turn/{turnId}/action
-    //POST      battle/{battleId}/turn/{turnId}/action
     //PUT       battle/{battleId}/attackerTeamInit
     //PUT       battle/{battleId}/defenderTeamInit
+    
+    let turnController = TurnController()
+    router.get("turn", Int.parameter, use: turnController.getTurn)
+    router.get("turn", "battleId", Int.parameter, use: turnController.getTurnsForBattle)
+    router.post(CreateBattleTurn.self, at: "turn", use: turnController.createTurn)
+    
+    let actionController = ActionController()
+//    router.get("action", "turnId", Int.parameter, use: actionController.getAction)
+    router.post(CreateBattleAction.self, at: "action", use: actionController.createAction)
     
     //GET       challenge
     //GET       challenge/find

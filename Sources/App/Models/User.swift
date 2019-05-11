@@ -18,6 +18,10 @@ struct User: PostgreSQLModel {
     var heroes: Children<User, Hero> {
         return children(\.userId)
     }
+    
+    var publicUser: PublicUser {
+        return PublicUser(id: self.id, name: self.name, mmr: self.mmr)
+    }
 }
 
 extension User: Migration {}
@@ -29,11 +33,11 @@ struct PublicUser: Content {
     let name: String
     let mmr: Int
     
-    init(user: User) {
-        id = user.id
-        name = user.name
-        mmr = user.mmr
-    }
+//    init(user: User) {
+//        id = user.id
+//        name = user.name
+//        mmr = user.mmr
+//    }
 }
 
 struct CreateUser: Content {
