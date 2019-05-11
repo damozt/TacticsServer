@@ -17,6 +17,14 @@ struct Hero: PostgreSQLModel {
     let actionIds: String
 }
 
-extension Hero: Migration { }
-extension Hero: Content { }
-extension Hero: Parameter { }
+extension Hero: Migration {
+    static func prepare(on conn: PostgreSQLConnection) -> Future<Void> {
+        return Database.create(self, on: conn) { (builder) in
+            try addProperties(to: builder)
+            builder.reference(from: \.userId, to: \User.id, onDelete: ._cascade)
+        }
+    }
+}
+
+extension Hero: Content {}
+extension Hero: Parameter {}

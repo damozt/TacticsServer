@@ -1,6 +1,4 @@
 import Vapor
-import JWT
-import CCryptoOpenSSL
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
@@ -14,6 +12,8 @@ public func routes(_ router: Router) throws {
     //GET       hero
     //POST      hero/create
     
+    let battleController = BattleController()
+    router.post(CreateBattle.self, at: "battle", use: battleController.createBattle)
     //GET       battle
     //GET       battle/all
     //GET       battle/{battleId}

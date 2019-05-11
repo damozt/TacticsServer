@@ -15,6 +15,7 @@ final class UserController {
     func getUser(_ req: Request) throws -> Future<PublicUser> {
         guard let firebaseUser = try req.authenticate() else { throw Abort(.unauthorized) }
         let users = User.query(on: req).filter(\.firebaseId, .equal, firebaseUser.sub).all()
+        
         return users.map { users in
             guard users.count == 1 else { throw Abort(.internalServerError) }
             return PublicUser(user: users[0])
@@ -34,7 +35,7 @@ final class UserController {
         guard let firebaseUser = try req.authenticate() else { throw Abort(.unauthorized) }
         
         let existingUsers = User.query(on: req).filter(\.firebaseId, .equal, firebaseUser.sub).count()
-        print(existingUsers)
+        print(existingUsers) //TODO: make sure this user has not been added already
         
         let user = User(id: nil, firebaseId: firebaseUser.sub, name: data.name, mmr: 1000)
         return user.save(on: req).map { newUser in

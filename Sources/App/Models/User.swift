@@ -8,13 +8,20 @@
 import Vapor
 import FluentPostgreSQL
 
-struct User: PostgreSQLModel, Migration, Content {
+struct User: PostgreSQLModel {
     
     var id: Int?
     let firebaseId: String
     let name: String
     let mmr: Int
+    
+    var heroes: Children<User, Hero> {
+        return children(\.userId)
+    }
 }
+
+extension User: Migration {}
+extension User: Content {}
 
 struct PublicUser: Content {
     

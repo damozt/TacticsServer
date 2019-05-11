@@ -1,12 +1,10 @@
-import PostgreSQL
-import FluentPostgreSQL
 import Vapor
+import FluentPostgreSQL
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
     
     // Register providers first
-    try services.register(PostgreSQLProvider())
     try services.register(FluentPostgreSQLProvider())
     
     // Register routes to the router
@@ -37,8 +35,14 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 
     // Configure migrations
     var migrations = MigrationConfig()
-    migrations.add(migration: Battle.self, database: .psql)
-    migrations.add(migration: Hero.self, database: .psql)
+    
+    migrations.add(model: Battle.self, database: .psql)
+    migrations.add(model: BattleTurn.self, database: .psql)
+    migrations.add(model: BattleAction.self, database: .psql)
+    
     migrations.add(model: User.self, database: .psql)
+    migrations.add(model: Hero.self, database: .psql)
+    migrations.add(model: Challenge.self, database: .psql)
+    
     services.register(migrations)
 }

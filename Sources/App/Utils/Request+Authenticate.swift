@@ -40,28 +40,28 @@ extension Request {
         
         let firebaseUser = try JSONDecoder().decode(FirebaseUser.self, from: payloadData)
         
-        //    let now = Date()
-        //    let projectId = "for-glory-tactics-dev"
-        //
-        //    if Date(timeIntervalSince1970: firebaseUser.auth_time) > now {
-        //        throw Abort(.unauthorized, reason: "Invalid Auth time")
-        //    }
-        //
-        //    if Date(timeIntervalSince1970: firebaseUser.iat) > now {
-        //        throw Abort(.unauthorized, reason: "Invalid Issued-at time")
-        //    }
+            let now = Date()
+            let projectId = "for-glory-tactics-dev"
+        
+            if Date(timeIntervalSince1970: firebaseUser.auth_time) > now {
+                throw Abort(.unauthorized, reason: "Invalid Auth time")
+            }
+            
+            if Date(timeIntervalSince1970: firebaseUser.iat) > now {
+                throw Abort(.unauthorized, reason: "Invalid Issued-at time")
+            }
         //
         //    if Date(timeIntervalSince1970: firebaseUser.exp) < now {
         //        throw Abort(.unauthorized, reason: "Token expired")
         //    }
-        //
-        //    if firebaseUser.aud != projectId {
-        //        throw Abort(.unauthorized, reason: "Invalid Audience")
-        //    }
-        //
-        //    if firebaseUser.iss != "https://securetoken.google.com/\(projectId)" {
-        //        throw Abort(.unauthorized, reason: "Invalid Issuer")
-        //    }
+        
+            if firebaseUser.aud != projectId {
+                throw Abort(.unauthorized, reason: "Invalid Audience")
+            }
+        
+            if firebaseUser.iss != "https://securetoken.google.com/\(projectId)" {
+                throw Abort(.unauthorized, reason: "Invalid Issuer")
+            }
         
         return firebaseUser
     }
