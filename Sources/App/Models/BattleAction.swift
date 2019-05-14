@@ -18,7 +18,11 @@ struct BattleAction: PostgreSQLModel {
     let actionIndex: Int
     let actionType: Int
     
-    static func newAction(from action: CreateBattleAction) -> BattleAction {
+    var detail: BattleActionDetail {
+        return BattleActionDetail(actionId: actionId, actionInfo: actionInfo, actionIndex: actionIndex, actionType: actionType)
+    }
+    
+    static func new(from action: CreateBattleAction) -> BattleAction {
         return BattleAction(id: nil, turnId: action.turnId, battleId: action.battleId, actionId: action.actionId, actionInfo: action.actionInfo, actionIndex: action.actionIndex, actionType: action.actionType)
     }
 }
@@ -35,7 +39,15 @@ extension BattleAction: Migration {
 extension BattleAction: Content {}
 extension BattleAction: Parameter {}
 
+struct BattleActionDetail: Content {
+    let actionId: String
+    let actionInfo: String
+    let actionIndex: Int
+    let actionType: Int
+}
+
 struct CreateBattleAction: Content {
+    
     let battleId: Int
     let turnId: Int
     let actionId: String

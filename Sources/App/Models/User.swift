@@ -28,16 +28,10 @@ extension User: Migration {}
 extension User: Content {}
 
 struct PublicUser: Content {
-    
+
     let id: Int?
     let name: String
     let mmr: Int
-    
-//    init(user: User) {
-//        id = user.id
-//        name = user.name
-//        mmr = user.mmr
-//    }
 }
 
 struct CreateUser: Content {

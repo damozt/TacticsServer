@@ -13,6 +13,7 @@ public func routes(_ router: Router) throws {
     //POST      hero/create
     
     let battleController = BattleController()
+//    router.get("battle", use: battleController.getUserBattles)
     router.get("battle", Int.parameter, use: battleController.getBattle)
     router.get("battle", "all", use: battleController.getAllBattles)
     router.post(CreateBattle.self, at: "battle", use: battleController.createBattle)

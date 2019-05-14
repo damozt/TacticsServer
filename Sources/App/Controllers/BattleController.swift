@@ -11,20 +11,31 @@ import FluentPostgreSQL
 
 final class BattleController {
     
-    func getBattle(_ req: Request) throws -> Future<Battle> {
+    func getBattle(_ req: Request) throws -> Future<BattleDetail> {
         let battleId = try req.parameters.next(Int.self)
-        let battles = Battle.query(on: req).filter(\.id, .equal, battleId).all()
-        
-        return battles.map { battles in
-            guard battles.count > 0 else { throw Abort(.noContent, reason: "No battles found.") }
-            guard battles.count == 1 else { throw Abort(.internalServerError) }
-            let battle = battles[0]
-            return battle
+        return req.dispatch { request in
+            let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
+            let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError)).wait()
+            let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError)).wait()
+            let turns = try BattleTurn.query(on: request).filter(\.id, .equal, battle.id).all().wait()
+            let new: [BattleTurnDetail] = try turns.map { turn in
+                let actions = try BattleAction.query(on: request).filter(\.id, .equal, turn.id).all().wait()
+                return turn.with(actions: actions)
+            }
+            
+            return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker.publicUser, defender: defender.publicUser, turns: new)
         }
     }
     
-    func getAllBattles(_ req: Request) throws -> Future<[Battle]> {
-        return Battle.query(on: req).all()
+    func getAllBattles(_ req: Request) throws -> Future<[BattleDetail]> {
+        return req.dispatch { request in
+            let battles = try Battle.query(on: request).all().wait()
+            return try battles.map { battle in
+                let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError)).wait()
+                let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError)).wait()
+                return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker.publicUser, defender: defender.publicUser, turns: [])
+            }
+        }
     }
     
     func createBattle(_ req: Request, data: CreateBattle) throws -> Future<Battle> {

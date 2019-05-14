@@ -17,6 +17,6 @@ final class BattleActionController {
     
     func createAction(_ req: Request, data: CreateBattleAction) throws -> Future<BattleAction> {
         guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
-        return BattleAction.newAction(from: data).save(on: req)
+        return BattleAction.new(from: data).save(on: req)
     }
 }

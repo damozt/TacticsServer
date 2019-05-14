@@ -17,6 +17,6 @@ final class BattleTurnController {
     
     func createTurn(_ req: Request, data: CreateBattleTurn) throws -> Future<BattleTurn> {
         guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
-        return BattleTurn.newTurn(from: data).save(on: req)
+        return BattleTurn.new(from: data).save(on: req)
     }
 }

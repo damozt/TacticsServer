@@ -17,12 +17,12 @@ struct BattleTurn: PostgreSQLModel {
     let userId: Int
     let iniativeSwitch: Bool
     
-    static func newTurn(from battle: CreateBattleTurn) -> BattleTurn {
-        return BattleTurn(id: nil, turnNumber: 1, heroId: battle.heroId, battleId: battle.battleId, userId: battle.userId, iniativeSwitch: battle.initiativeSwitch)
+    func with(actions: [BattleAction]) -> BattleTurnDetail {
+        return BattleTurnDetail(turnNumber: turnNumber, heroId: heroId, userId: userId, iniativeSwitch: iniativeSwitch, actions: actions.map { $0.detail })
     }
     
-    var actions: Children<BattleTurn, BattleAction> {
-        return children(\.turnId)
+    static func new(from battle: CreateBattleTurn) -> BattleTurn {
+        return BattleTurn(id: nil, turnNumber: 1, heroId: battle.heroId, battleId: battle.battleId, userId: battle.userId, iniativeSwitch: battle.initiativeSwitch)
     }
 }
 
@@ -38,7 +38,16 @@ extension BattleTurn: Migration {
 extension BattleTurn: Content {}
 extension BattleTurn: Parameter {}
 
+struct BattleTurnDetail: Content {
+    let turnNumber: Int
+    let heroId: Int
+    let userId: Int
+    let iniativeSwitch: Bool
+    let actions: [BattleActionDetail]
+}
+
 struct CreateBattleTurn: Content {
+    
     let battleId: Int
     let heroId: Int
     let userId: Int
