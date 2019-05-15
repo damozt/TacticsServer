@@ -22,18 +22,18 @@ final class BattleController {
                 let actions = try BattleAction.query(on: request).filter(\.id, .equal, turn.id).all().wait()
                 return turn.with(actions: actions)
             }
-            
             return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker.publicUser, defender: defender.publicUser, turns: new)
         }
     }
     
-    func getAllBattles(_ req: Request) throws -> Future<[BattleDetail]> {
+    func getUserBattles(_ req: Request) throws -> Future<[BattleDetail]> {
+        let userId = try req.parameters.next(Int.self)
         return req.dispatch { request in
-            let battles = try Battle.query(on: request).all().wait()
+            let battles = try Battle.query(on: request).group(.or) { $0.filter(\.attackerId, .equal, userId).filter(\.defenderId, .equal, userId) }.all().wait()
             return try battles.map { battle in
                 let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError)).wait()
                 let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError)).wait()
-                return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker.publicUser, defender: defender.publicUser, turns: [])
+                return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker.publicUser, defender: defender.publicUser, turns: nil)
             }
         }
     }

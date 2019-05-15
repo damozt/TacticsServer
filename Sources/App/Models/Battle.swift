@@ -42,7 +42,7 @@ struct BattleDetail: Content {
     let stageId: String
     let attacker: PublicUser?
     let defender: PublicUser?
-    let turns: [BattleTurnDetail]
+    let turns: [BattleTurnDetail]?
 }
 
 struct TeamInit: Content {
