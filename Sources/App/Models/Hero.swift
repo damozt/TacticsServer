@@ -12,9 +12,9 @@ struct Hero: PostgreSQLModel {
     
     var id: Int?
     let userId: Int
-    let name: String
-    let type: Int
-    let actionIds: String
+    var name: String
+    var type: Int
+    var actionIds: String
     
 //    static func newHero(from hero: CreateHero) -> Battle {
 //        return Hero(id: nil, userId: hero.userId, name: hero.name, type: hero.type, actionIds: "[]")

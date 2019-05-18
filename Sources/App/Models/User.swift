@@ -13,7 +13,7 @@ struct User: PostgreSQLModel {
     var id: Int?
     let firebaseId: String
     let name: String
-    let mmr: Int
+    var mmr: Int
     
     var heroes: Children<User, Hero> {
         return children(\.userId)

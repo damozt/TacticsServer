@@ -17,10 +17,12 @@ final class UserController: BaseController {
     }
     
     func getAllUsers(_ req: Request) throws -> Future<DataResponse<[PublicUser]>> {
+        guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
         return User.query(on: req).all().map { $0.map { $0.publicUser } }.map { DataResponse<[PublicUser]>(data: $0) }
     }
     
     func findUsersWithName(_ req: Request) throws -> Future<DataResponse<[PublicUser]>> {
+        guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
         let name = try req.query.get(String.self, at: "name")
         return User.query(on: req).filter(\.name, .ilike, name).all().map { $0.map { $0.publicUser } }.map { DataResponse<[PublicUser]>(data: $0) }
     }
@@ -34,4 +36,6 @@ final class UserController: BaseController {
             return DataResponse<PublicUser>(data: newUser.publicUser)
         }
     }
+    
+    //delete user - has to go through all battles and delete battles they are in
 }

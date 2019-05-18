@@ -15,7 +15,7 @@ public func routes(_ router: Router) throws {
     
     let battleController = BattleController()
     router.get("battle", Int.parameter, use: battleController.getBattle)
-    router.get("battle", "user", Int.parameter, use: battleController.getUserBattles)
+    router.get("battle", use: battleController.getUserBattles)
     router.post(CreateBattle.self, at: "battle", use: battleController.createBattle)
     router.put(TeamInit.self, at: "battle", Int.parameter, "attackerInit", use: battleController.updateAttackerInit)
     router.put(TeamInit.self, at: "battle", Int.parameter, "defenderInit", use: battleController.updateDefenderInit)
