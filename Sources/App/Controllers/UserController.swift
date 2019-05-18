@@ -10,19 +10,10 @@ import JWT
 import PostgreSQL
 import FluentPostgreSQL
 
-final class UserController {
+final class UserController: BaseController {
     
     func getUser(_ req: Request) throws -> Future<DataResponse<PublicUser>> {
-        guard let firebaseUser = try req.authenticate() else { throw Abort(.unauthorized) }
-        let users = User.query(on: req).filter(\.firebaseId, .equal, firebaseUser.sub).all()
-        
-        return users.map { users in
-            guard users.count > 0 else { throw Abort(.noContent, reason: "No users found.") }
-            guard users.count == 1 else { throw Abort(.internalServerError) }
-            return users[0].publicUser
-        }.map {
-            return DataResponse<PublicUser>(data: $0)
-        }
+        return try authenticatedUser(req).map { DataResponse<PublicUser>(data: $0.publicUser) }
     }
     
     func getAllUsers(_ req: Request) throws -> Future<DataResponse<[PublicUser]>> {
@@ -36,11 +27,11 @@ final class UserController {
     
     func createUser(_ req: Request, data: CreateUser) throws -> Future<DataResponse<PublicUser>> {
         guard let firebaseUser = try req.authenticate() else { throw Abort(.unauthorized) }
-        
-        let existingUsers = User.query(on: req).filter(\.firebaseId, .equal, firebaseUser.sub).count()
-        print(existingUsers) //TODO: make sure this user has not been added already
-        
-        let user = User(id: nil, firebaseId: firebaseUser.sub, name: data.name, mmr: 1000)
-        return user.save(on: req).map { $0.publicUser }.map { DataResponse<PublicUser>(data: $0) }
+        return req.dispatch { request in
+            let existingUsers = try User.query(on: req).filter(\.firebaseId, .equal, firebaseUser.sub).all().wait()
+            guard existingUsers.count == 0 else { throw Abort(.forbidden, reason: "This user already exists") }
+            let newUser = try User(id: nil, firebaseId: firebaseUser.sub, name: data.name, mmr: 1000).save(on: req).wait()
+            return DataResponse<PublicUser>(data: newUser.publicUser)
+        }
     }
 }

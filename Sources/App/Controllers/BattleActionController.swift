@@ -16,7 +16,15 @@ final class BattleActionController {
     }
     
     func createAction(_ req: Request, data: CreateBattleAction) throws -> Future<BattleAction> {
-        guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
-        return BattleAction.new(from: data).save(on: req)
+        
+        return req.dispatch { request in
+            var battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.noContent)).wait()
+            guard try BattleTurn.find(data.turnId, on: request).wait() != nil else { throw Abort(.noContent) }
+            battle.updateTime = Date().timeIntervalSince1970
+            _ = battle.update(on: request)
+            let newAction = BattleAction.new(from: data)
+            _ = newAction.save(on: request)
+            return newAction
+        }
     }
 }

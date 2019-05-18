@@ -17,8 +17,8 @@ struct Battle: PostgreSQLModel {
     let stageId: String
     let attackerId: Int
     let defenderId: Int
-    let attackerInit: String
-    let defenderInit: String
+    var attackerInit: String
+    var defenderInit: String
     
     static func newBattle(from battle: CreateBattle) -> Battle {
         return Battle(id: nil, updateTime: Date().timeIntervalSince1970, stageId: battle.stageId, attackerId: battle.attackerId, defenderId: battle.defenderId, attackerInit: "{}", defenderInit: "{}")

@@ -9,7 +9,7 @@ import Vapor
 import PostgreSQL
 import FluentPostgreSQL
 
-final class BattleController {
+final class BattleController: BaseController {
     
     func getBattle(_ req: Request) throws -> Future<DataResponse<BattleDetail>> {
         let battleId = try req.parameters.next(Int.self)
@@ -43,17 +43,45 @@ final class BattleController {
     }
     
     func createBattle(_ req: Request, data: CreateBattle) throws -> Future<Battle> {
-        guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
-        return Battle.newBattle(from: data).save(on: req)
+        
+        return req.dispatch { request in
+            let user = try self.authenticatedUser(request).wait()
+            guard user.id == data.attackerId || user.id == data.defenderId else { throw Abort(.unauthorized) }
+            guard try User.find(data.attackerId, on: request).wait() != nil else { throw Abort(.notFound, reason: "User with id: \(data.attackerId) not found") }
+            guard try User.find(data.defenderId, on: request).wait() != nil else { throw Abort(.notFound, reason: "User with id: \(data.defenderId) not found") }
+            return try Battle.newBattle(from: data).save(on: request).wait()
+        }
     }
     
     func updateAttackerInit(_ req: Request, data: TeamInit) throws -> Future<HTTPStatus> {
-        let battleId = try req.parameters.next(Int.self)
-        return Battle.query(on: req).filter(\.id, .equal, battleId).update(\.attackerInit, to: data.data).run().transform(to: .ok)
+        
+        // make sure battle has not started?
+        
+        return req.dispatch { request in
+            let battleId = try request.parameters.next(Int.self)
+            var battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
+            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
+            guard userId == battle.attackerId else { throw Abort(.forbidden) }
+            battle.attackerInit = data.data
+            battle.updateTime = Date().timeIntervalSince1970
+            _ = battle.update(on: request)
+            return .ok
+        }
     }
     
     func updateDefenderInit(_ req: Request, data: TeamInit) throws -> Future<HTTPStatus> {
-        let battleId = try req.parameters.next(Int.self)
-        return Battle.query(on: req).filter(\.id, .equal, battleId).update(\.defenderInit, to: data.data).run().transform(to: .ok)
+        
+        // make sure battle has not started?
+        
+        return req.dispatch { request in
+            let battleId = try request.parameters.next(Int.self)
+            var battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
+            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
+            guard userId == battle.defenderId else { throw Abort(.forbidden) }
+            battle.defenderInit = data.data
+            battle.updateTime = Date().timeIntervalSince1970
+            _ = battle.update(on: request)
+            return .ok
+        }
     }
 }

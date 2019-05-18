@@ -15,6 +15,10 @@ struct Hero: PostgreSQLModel {
     let name: String
     let type: Int
     let actionIds: String
+    
+//    static func newHero(from hero: CreateHero) -> Battle {
+//        return Hero(id: nil, userId: hero.userId, name: hero.name, type: hero.type, actionIds: "[]")
+//    }
 }
 
 extension Hero: Migration {
@@ -28,3 +32,9 @@ extension Hero: Migration {
 
 extension Hero: Content {}
 extension Hero: Parameter {}
+
+struct CreateHero: Content {
+    let userId: Int
+    let name: String
+    let type: Int
+}
