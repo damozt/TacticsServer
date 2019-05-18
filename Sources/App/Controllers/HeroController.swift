@@ -20,9 +20,11 @@ final class HeroController: BaseController {
         return Hero.query(on: req).filter(\.userId, .equal, userId).all().map { DataResponse<[Hero]>(data: $0) }
     }
     
-    func createHero(_ req: Request, data: CreateHero) throws -> Future<Hero> { //TODO: Update to DataResponse
+    func createHero(_ req: Request, data: CreateHero) throws -> Future<DataResponse<Hero>> {
         guard let _ = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
-        return Hero(id: nil, userId: 0, name: "asd", type: 0, actionIds: "[]").save(on: req)
-//        return Hero.newHero(from: data).save(on: req)
+        return req.dispatch { request in
+            let hero = try Hero(id: nil, userId: 0, name: "asd", type: 0, actionIds: "[]").save(on: request).wait()
+            return DataResponse<Hero>(data: hero)
+        }
     }
 }

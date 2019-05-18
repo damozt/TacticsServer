@@ -10,9 +10,12 @@ import FluentPostgreSQL
 
 final class BattleActionController: BaseController {
     
-    func getActionsForBattle(_ req: Request) throws -> Future<[BattleAction]> { //TODO: Update to DataResponse
-        let battleId = try req.parameters.next(Int.self)
-        return BattleAction.query(on: req).filter(\.battleId, .equal, battleId).all()
+    func getActionsForBattle(_ req: Request) throws -> Future<DataResponse<[BattleAction]>> {
+        return req.dispatch { request in
+            let battleId = try request.parameters.next(Int.self)
+            let actions = try BattleAction.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
+            return DataResponse<[BattleAction]>(data: actions)
+        }
     }
     
     func createAction(_ req: Request, data: CreateBattleAction) throws -> Future<DataResponse<BattleAction>> {
