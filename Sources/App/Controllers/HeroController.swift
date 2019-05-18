@@ -21,7 +21,7 @@ final class HeroController: BaseController {
     }
     
     func createHero(_ req: Request, data: CreateHero) throws -> Future<Hero> { //TODO: Update to DataResponse
-        guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
+        guard let _ = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
         return Hero(id: nil, userId: 0, name: "asd", type: 0, actionIds: "[]").save(on: req)
 //        return Hero.newHero(from: data).save(on: req)
     }

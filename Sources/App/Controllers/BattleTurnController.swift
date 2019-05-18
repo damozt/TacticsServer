@@ -8,7 +8,7 @@
 import Vapor
 import FluentPostgreSQL
 
-final class BattleTurnController {
+final class BattleTurnController: BaseController {
     
     func getTurnsForBattle(_ req: Request) throws -> Future<[BattleTurn]> { //TODO: Update to DataResponse
         let battleId = try req.parameters.next(Int.self)
@@ -16,7 +16,7 @@ final class BattleTurnController {
     }
     
     func createTurn(_ req: Request, data: CreateBattleTurn) throws -> Future<DataResponse<BattleTurn>> {
-        guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
+        guard let _ = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
         
         return req.dispatch { request in
             var battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).wait()
