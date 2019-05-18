@@ -20,7 +20,11 @@ struct User: PostgreSQLModel {
     }
     
     var publicUser: PublicUser {
-        return PublicUser(id: self.id, name: self.name, mmr: self.mmr)
+        return PublicUser(id: id, name: name, mmr: mmr)
+    }
+    
+    func battleUser(`init`: String) -> BattleUser {
+        return BattleUser(id: id, name: name, init: `init`)
     }
 }
 

@@ -40,9 +40,16 @@ struct BattleDetail: Content {
     var id: Int?
     var updateTime: TimeInterval
     let stageId: String
-    let attacker: PublicUser?
-    let defender: PublicUser?
+    let attacker: BattleUser?
+    let defender: BattleUser?
     let turns: [BattleTurnDetail]?
+}
+
+struct BattleUser: Content {
+    
+    let id: Int?
+    let name: String
+    let `init`: String
 }
 
 struct TeamInit: Content {
