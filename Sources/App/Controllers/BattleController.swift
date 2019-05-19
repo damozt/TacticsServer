@@ -47,8 +47,6 @@ final class BattleController: BaseController {
     
     func createBattle(_ req: Request, data: CreateBattle) throws -> Future<DataResponse<Battle>> {
         
-//        throw Abort(.internalServerError)
-        
         return req.dispatch { request in
             let user = try self.authenticatedUser(request).wait()
             guard user.id == data.attackerId || user.id == data.defenderId else { throw Abort(.unauthorized) }
@@ -63,11 +61,9 @@ final class BattleController: BaseController {
         
         // make sure battle has not started?
         
-//        throw Abort(.internalServerError)
-        
         return req.dispatch { request in
             let battleId = try request.parameters.next(Int.self)
-            let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(battleId) doesn't exist")).wait()
+            var battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(battleId) doesn't exist")).wait()
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
             guard userId == battle.attackerId else { throw Abort(.forbidden) }
             battle.attackerInit = data.data
@@ -81,11 +77,9 @@ final class BattleController: BaseController {
         
         // make sure battle has not started?
         
-//        throw Abort(.internalServerError)
-        
         return req.dispatch { request in
             let battleId = try request.parameters.next(Int.self)
-            let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
+            var battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
             guard userId == battle.defenderId else { throw Abort(.forbidden) }
             battle.defenderInit = data.data

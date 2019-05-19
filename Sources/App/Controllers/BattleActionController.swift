@@ -21,10 +21,8 @@ final class BattleActionController: BaseController {
     func createAction(_ req: Request, data: CreateBattleAction) throws -> Future<DataResponse<BattleAction>> {
         guard let _ = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
         
-//        Battle.find(data.battleId, on: req).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")
-        
         return req.dispatch { request in
-            let battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).wait()
+            var battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).wait()
             guard try BattleTurn.find(data.turnId, on: request).wait() != nil else { throw Abort(.badRequest, reason: "Turn with id: \(data.turnId) doesn't exist") }
             battle.updateTime = Date().timeIntervalSince1970
             _ = battle.update(on: request)
