@@ -47,51 +47,51 @@ final class BattleController: BaseController {
     
     func createBattle(_ req: Request, data: CreateBattle) throws -> Future<DataResponse<Battle>> {
         
-        throw Abort(.internalServerError)
+//        throw Abort(.internalServerError)
         
-//        return req.dispatch { request in
-//            let user = try self.authenticatedUser(request).wait()
-//            guard user.id == data.attackerId || user.id == data.defenderId else { throw Abort(.unauthorized) }
-//            guard try User.find(data.attackerId, on: request).wait() != nil else { throw Abort(.badRequest, reason: "User with id: \(data.attackerId) doesn't exist") }
-//            guard try User.find(data.defenderId, on: request).wait() != nil else { throw Abort(.badRequest, reason: "User with id: \(data.defenderId) doesn't exist") }
-//            let newBattle = try Battle.newBattle(from: data).save(on: request).wait()
-//            return DataResponse<Battle>(data: newBattle)
-//        }
+        return req.dispatch { request in
+            let user = try self.authenticatedUser(request).wait()
+            guard user.id == data.attackerId || user.id == data.defenderId else { throw Abort(.unauthorized) }
+            guard try User.find(data.attackerId, on: request).wait() != nil else { throw Abort(.badRequest, reason: "User with id: \(data.attackerId) doesn't exist") }
+            guard try User.find(data.defenderId, on: request).wait() != nil else { throw Abort(.badRequest, reason: "User with id: \(data.defenderId) doesn't exist") }
+            let newBattle = try Battle.newBattle(from: data).save(on: request).wait()
+            return DataResponse<Battle>(data: newBattle)
+        }
     }
     
     func updateAttackerInit(_ req: Request, data: TeamInit) throws -> Future<HTTPStatus> {
         
         // make sure battle has not started?
         
-        throw Abort(.internalServerError)
+//        throw Abort(.internalServerError)
         
-//        return req.dispatch { request in
-//            let battleId = try request.parameters.next(Int.self)
-//            let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(battleId) doesn't exist")).wait()
-//            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
-//            guard userId == battle.attackerId else { throw Abort(.forbidden) }
-//            battle.attackerInit = data.data
-//            battle.updateTime = Date().timeIntervalSince1970
-//            _ = battle.update(on: request)
-//            return .ok
-//        }
+        return req.dispatch { request in
+            let battleId = try request.parameters.next(Int.self)
+            let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(battleId) doesn't exist")).wait()
+            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
+            guard userId == battle.attackerId else { throw Abort(.forbidden) }
+            battle.attackerInit = data.data
+            battle.updateTime = Date().timeIntervalSince1970
+            _ = battle.update(on: request)
+            return .ok
+        }
     }
     
     func updateDefenderInit(_ req: Request, data: TeamInit) throws -> Future<HTTPStatus> {
         
         // make sure battle has not started?
         
-        throw Abort(.internalServerError)
+//        throw Abort(.internalServerError)
         
-//        return req.dispatch { request in
-//            let battleId = try request.parameters.next(Int.self)
-//            let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
-//            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
-//            guard userId == battle.defenderId else { throw Abort(.forbidden) }
-//            battle.defenderInit = data.data
-//            battle.updateTime = Date().timeIntervalSince1970
-//            _ = battle.update(on: request)
-//            return .ok
-//        }
+        return req.dispatch { request in
+            let battleId = try request.parameters.next(Int.self)
+            let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
+            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
+            guard userId == battle.defenderId else { throw Abort(.forbidden) }
+            battle.defenderInit = data.data
+            battle.updateTime = Date().timeIntervalSince1970
+            _ = battle.update(on: request)
+            return .ok
+        }
     }
 }
