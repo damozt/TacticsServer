@@ -10,7 +10,7 @@ import FluentPostgreSQL
 
 //TODO: BattleDetail
 
-final class Battle: PostgreSQLModel {
+struct Battle: PostgreSQLModel {
     
     var id: Int?
     var updateTime: TimeInterval
@@ -20,15 +20,15 @@ final class Battle: PostgreSQLModel {
     var attackerInit: String
     var defenderInit: String
     
-    init(id: Int?, updateTime: TimeInterval, stageId: String, attackerId: Int, defenderId: Int, attackerInit: String, defenderInit: String) {
-        self.id = id
-        self.updateTime = updateTime
-        self.stageId = stageId
-        self.attackerId = attackerId
-        self.defenderId = defenderId
-        self.attackerInit = attackerInit
-        self.defenderInit = defenderInit
-    }
+//    init(id: Int?, updateTime: TimeInterval, stageId: String, attackerId: Int, defenderId: Int, attackerInit: String, defenderInit: String) {
+//        self.id = id
+//        self.updateTime = updateTime
+//        self.stageId = stageId
+//        self.attackerId = attackerId
+//        self.defenderId = defenderId
+//        self.attackerInit = attackerInit
+//        self.defenderInit = defenderInit
+//    }
     
     static func newBattle(from battle: CreateBattle) -> Battle {
         return Battle(id: nil, updateTime: Date().timeIntervalSince1970, stageId: battle.stageId, attackerId: battle.attackerId, defenderId: battle.defenderId, attackerInit: "{}", defenderInit: "{}")
