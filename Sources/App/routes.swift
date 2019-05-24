@@ -7,7 +7,7 @@ public func routes(_ router: Router) throws {
     router.get("user", "all", use: userController.getAllUsers)
     router.get("user", "search", use: userController.findUsersWithName)
     router.post(CreateUser.self, at: "user", use: userController.createUser)
-
+    
     let heroController = HeroController()
     router.get("hero", Int.parameter, use: heroController.getHero)
     router.get("hero", "user", Int.parameter, use: heroController.getUserHeroes)
@@ -23,7 +23,7 @@ public func routes(_ router: Router) throws {
     let battleTurnController = BattleTurnController()
     router.get("turn", "battle", Int.parameter, use: battleTurnController.getTurnsForBattle)
     router.post(CreateBattleTurn.self, at: "turn", use: battleTurnController.createTurn)
-
+    
     let battleActionController = BattleActionController()
     router.get("action", "battle", Int.parameter, use: battleActionController.getActionsForBattle)
     router.post(CreateBattleAction.self, at: "action", use: battleActionController.createAction)

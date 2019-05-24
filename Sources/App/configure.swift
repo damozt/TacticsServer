@@ -11,7 +11,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     let router = EngineRouter.default()
     try routes(router)
     services.register(router, as: Router.self)
-
+    
     // Register middleware
     var middlewares = MiddlewareConfig()
     middlewares.use(FileMiddleware.self)
@@ -32,7 +32,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var databases = DatabasesConfig()
     databases.add(database: postgresql, as: .psql)
     services.register(databases)
-
+    
     // Configure migrations
     var migrations = MigrationConfig()
     
