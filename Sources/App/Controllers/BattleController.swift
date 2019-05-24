@@ -66,8 +66,8 @@ final class BattleController: BaseController {
             var battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(battleId) doesn't exist")).wait()
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
             guard userId == battle.attackerId else { throw Abort(.forbidden) }
-            battle.update(attackerInit: data.data)
-            battle.update(updateTime: Date().timeIntervalSince1970)
+//            battle.attackerInit = data.data
+//            battle.updateTime = Date().timeIntervalSince1970
             _ = battle.update(on: request)
             return .ok
         }
@@ -82,8 +82,8 @@ final class BattleController: BaseController {
             var battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.noContent)).wait()
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
             guard userId == battle.defenderId else { throw Abort(.forbidden) }
-            battle.update(defenderInit: data.data)
-            battle.update(updateTime: Date().timeIntervalSince1970)
+//            battle.defenderInit = data.data
+//            battle.updateTime = Date().timeIntervalSince1970
             _ = battle.update(on: request)
             return .ok
         }

@@ -21,13 +21,11 @@ final class BattleActionController: BaseController {
     func createAction(_ req: Request, data: CreateBattleAction) throws -> Future<DataResponse<BattleAction>> {
         guard let _ = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
         
-        return req.dispatch { request in
-            var battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).wait()
-            guard try BattleTurn.find(data.turnId, on: request).wait() != nil else { throw Abort(.badRequest, reason: "Turn with id: \(data.turnId) doesn't exist") }
-            battle.update(updateTime: Date().timeIntervalSince1970)
-            _ = battle.update(on: request)
+        return Battle.find(data.battleId, on: req).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).map { battle in
+//            battle.updateTime = Date().timeIntervalSince1970
+            _ = battle.update(on: req)
             let newAction = BattleAction.new(from: data)
-            _ = newAction.save(on: request)
+            _ = newAction.save(on: req)
             
             if newAction.actionType == 3 {
                 print("send notification telling the other user it is their turn!")
