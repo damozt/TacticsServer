@@ -23,7 +23,7 @@ final class BattleActionController: BaseController {
         
         return Battle.find(data.battleId, on: req).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).map { battle in
 //            battle.updateTime = Date().timeIntervalSince1970
-            _ = battle.update(on: req)
+//            _ = battle.update(on: req)
             let newAction = BattleAction.new(from: data)
             _ = newAction.save(on: req)
             

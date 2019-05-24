@@ -68,7 +68,7 @@ final class BattleController: BaseController {
             guard userId == battle.attackerId else { throw Abort(.forbidden) }
 //            battle.attackerInit = data.data
 //            battle.updateTime = Date().timeIntervalSince1970
-            _ = battle.update(on: request)
+//            _ = battle.update(on: request)
             return .ok
         }
     }
@@ -84,7 +84,7 @@ final class BattleController: BaseController {
             guard userId == battle.defenderId else { throw Abort(.forbidden) }
 //            battle.defenderInit = data.data
 //            battle.updateTime = Date().timeIntervalSince1970
-            _ = battle.update(on: request)
+//            _ = battle.update(on: request)
             return .ok
         }
     }

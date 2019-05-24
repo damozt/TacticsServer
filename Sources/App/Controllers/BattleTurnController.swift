@@ -26,7 +26,7 @@ final class BattleTurnController: BaseController {
             guard data.userId == battle.attackerId || data.userId == battle.defenderId else { throw Abort(.badRequest, reason: "No user with id: \(data.userId) exists in this battle") }
             // TODO: make sure heroId exists in db
 //            battle.update(updateTime: Date().timeIntervalSince1970)
-            _ = battle.update(on: request)
+//            _ = battle.update(on: request)
             let newTurn = BattleTurn.new(from: data)
             _ = newTurn.save(on: request)
             return DataResponse<BattleTurn>(data: newTurn)
