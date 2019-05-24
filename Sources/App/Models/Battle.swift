@@ -20,18 +20,20 @@ struct Battle: PostgreSQLModel {
     var attackerInit: String
     var defenderInit: String
     
-//    init(id: Int?, updateTime: TimeInterval, stageId: String, attackerId: Int, defenderId: Int, attackerInit: String, defenderInit: String) {
-//        self.id = id
-//        self.updateTime = updateTime
-//        self.stageId = stageId
-//        self.attackerId = attackerId
-//        self.defenderId = defenderId
-//        self.attackerInit = attackerInit
-//        self.defenderInit = defenderInit
-//    }
-    
     static func newBattle(from battle: CreateBattle) -> Battle {
         return Battle(id: nil, updateTime: Date().timeIntervalSince1970, stageId: battle.stageId, attackerId: battle.attackerId, defenderId: battle.defenderId, attackerInit: "{}", defenderInit: "{}")
+    }
+    
+    mutating func update(updateTime: TimeInterval) {
+        self.updateTime = updateTime
+    }
+    
+    mutating func update(attackerInit: String) {
+        self.attackerInit = attackerInit
+    }
+    
+    mutating func update(defenderInit: String) {
+        self.defenderInit = defenderInit
     }
 }
 

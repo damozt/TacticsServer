@@ -24,7 +24,7 @@ final class BattleActionController: BaseController {
         return req.dispatch { request in
             var battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).wait()
             guard try BattleTurn.find(data.turnId, on: request).wait() != nil else { throw Abort(.badRequest, reason: "Turn with id: \(data.turnId) doesn't exist") }
-            battle.updateTime = Date().timeIntervalSince1970
+            battle.update(updateTime: Date().timeIntervalSince1970)
             _ = battle.update(on: request)
             let newAction = BattleAction.new(from: data)
             _ = newAction.save(on: request)
