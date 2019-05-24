@@ -10,7 +10,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
         .package(url: "https://github.com/vapor/postgresql.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0"),
-        .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0")
+        .package(url: "https://github.com/vapor/fluent-postgresql.git", from: "1.0.0"),
     ],
     targets: [
         .target(name: "App", dependencies: ["Vapor", "PostgreSQL", "FluentPostgreSQL", "JWT"]),
@@ -18,3 +18,6 @@ let package = Package(
         .testTarget(name: "AppTests", dependencies: ["App"])
     ]
 )
+
+//name:products:dependencies:_:_:_:targets:
+//name:pkgConfig:providers:products:dependencies:targets:swiftLanguageVersions:cLanguageStandard:cxxLanguageStandard
