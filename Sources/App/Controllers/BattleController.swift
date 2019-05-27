@@ -17,15 +17,13 @@ final class BattleController: BaseController {
         let battleId = try req.parameters.next(Int.self)
         return req.dispatch { request in
             let battle = try Battle.find(battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(battleId) doesn't exist")).wait()
-
-            guard let battleId = battle.id else { throw Abort(.internalServerError) }
             
             let heroInits = try BattleInit.query(on: req).filter(\.battleId, .equal, battleId).all().wait()
             let attackerHeroInits = heroInits.filter { $0.userId == battle.attackerId }.compactMap { BattleInitDetail(battleInit: $0) }
             let defenderHeroInits = heroInits.filter { $0.userId == battle.defenderId }.compactMap { BattleInitDetail(battleInit: $0) }
             
-            let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, heroInits: attackerHeroInits) }.wait()
-            let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, heroInits: defenderHeroInits) }.wait()
+            let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError, reason: "No user with id: \(battle.attackerId)")).map { BattleUser(id: $0.id, name: $0.name, heroInits: attackerHeroInits) }.wait()
+            let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError, reason: "No user with id: \(battle.defenderId)")).map { BattleUser(id: $0.id, name: $0.name, heroInits: defenderHeroInits) }.wait()
             
             let turns = try BattleTurn.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
             
@@ -44,8 +42,8 @@ final class BattleController: BaseController {
         return req.dispatch { request in
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
             let battles = try Battle.query(on: request).group(.or) { $0.filter(\.attackerId, .equal, userId).filter(\.defenderId, .equal, userId) }.all().wait()
-            return try battles.map { battle in
-                guard let battleId = battle.id else { throw Abort(.internalServerError) }
+            return try battles.compactMap { battle in
+                guard let battleId = battle.id else { return nil }
                 
                 let heroInits = try BattleInit.query(on: req).filter(\.battleId, .equal, battleId).all().wait()
                 let attackerHeroInits = heroInits.filter { $0.userId == battle.attackerId }.compactMap { BattleInitDetail(battleInit: $0) }

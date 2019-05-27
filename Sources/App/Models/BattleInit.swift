@@ -33,7 +33,6 @@ extension BattleInit: Parameter {}
 
 struct CreateBattleInit: Content {
     let battleId: Int
-    let userId: Int
     let heroId: Int
     let heroName: String
     let heroType: Int
