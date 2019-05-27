@@ -21,8 +21,8 @@ struct BattleTurn: PostgreSQLModel {
         return BattleTurnDetail(turnNumber: turnNumber, heroId: heroId, userId: userId, initiativeSwitch: initiativeSwitch, actions: actions.map { $0.detail })
     }
     
-    static func new(from battle: CreateBattleTurn) -> BattleTurn {
-        return BattleTurn(id: nil, turnNumber: 1, heroId: battle.heroId, battleId: battle.battleId, userId: battle.userId, initiativeSwitch: battle.initiativeSwitch)
+    static func new(from battle: CreateBattleTurn, userId: Int) -> BattleTurn {
+        return BattleTurn(id: nil, turnNumber: 1, heroId: battle.heroId, battleId: battle.battleId, userId: userId, initiativeSwitch: battle.initiativeSwitch)
     }
 }
 
@@ -50,6 +50,5 @@ struct CreateBattleTurn: Content {
     
     let battleId: Int
     let heroId: Int
-    let userId: Int
     let initiativeSwitch: Bool
 }

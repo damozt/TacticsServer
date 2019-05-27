@@ -23,9 +23,9 @@ struct User: PostgreSQLModel {
         return PublicUser(id: id, name: name, mmr: mmr)
     }
     
-    func battleUser(`init`: String) -> BattleUser {
-        return BattleUser(id: id, name: name, init: `init`)
-    }
+//    func battleUser(heroInits: [HeroInit]) -> BattleUser {
+//        return BattleUser(id: id, name: name, heroInits: heroInits)
+//    }
 }
 
 extension User: Migration {}

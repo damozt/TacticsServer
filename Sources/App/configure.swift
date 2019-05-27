@@ -37,6 +37,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var migrations = MigrationConfig()
     
     migrations.add(model: Battle.self, database: .psql)
+    migrations.add(model: BattleInit.self, database: .psql)
     migrations.add(model: BattleTurn.self, database: .psql)
     migrations.add(model: BattleAction.self, database: .psql)
     

@@ -33,6 +33,10 @@ extension Hero: Migration {
 extension Hero: Content {}
 extension Hero: Parameter {}
 
+struct GetHeroes: Content {
+    let ids: [Int]
+}
+
 struct CreateHero: Content {
     let userId: Int
     let name: String

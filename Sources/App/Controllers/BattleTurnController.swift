@@ -19,15 +19,15 @@ final class BattleTurnController: BaseController {
     }
     
     func createTurn(_ req: Request, data: CreateBattleTurn) throws -> Future<DataResponse<BattleTurn>> {
-        guard let _ = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
-    
+        
         return req.dispatch { request in
+            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
             var battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).wait()
-            guard data.userId == battle.attackerId || data.userId == battle.defenderId else { throw Abort(.badRequest, reason: "No user with id: \(data.userId) exists in this battle") }
+            guard userId == battle.attackerId || userId == battle.defenderId else { throw Abort(.badRequest, reason: "No user with id: \(userId) exists in this battle") }
             // TODO: make sure heroId exists in db
-//            battle.update(updateTime: Date().timeIntervalSince1970)
-//            _ = battle.update(on: request)
-            let newTurn = BattleTurn.new(from: data)
+            battle.updateTime = Date().timeIntervalSince1970
+            _ = battle.update(on: request)
+            let newTurn = BattleTurn.new(from: data, userId: userId)
             _ = newTurn.save(on: request)
             return DataResponse<BattleTurn>(data: newTurn)
         }
