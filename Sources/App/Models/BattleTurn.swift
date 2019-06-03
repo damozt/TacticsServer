@@ -18,7 +18,7 @@ struct BattleTurn: PostgreSQLModel {
     let initiativeSwitch: Bool
     
     func with(actions: [BattleAction]) -> BattleTurnDetail {
-        return BattleTurnDetail(turnNumber: turnNumber, heroId: heroId, userId: userId, initiativeSwitch: initiativeSwitch, actions: actions.map { $0.detail })
+        return BattleTurnDetail(id: id, turnNumber: turnNumber, heroId: heroId, userId: userId, initiativeSwitch: initiativeSwitch, actions: actions.map { $0.detail })
     }
     
     static func new(from battle: CreateBattleTurn, userId: Int) -> BattleTurn {
@@ -39,6 +39,7 @@ extension BattleTurn: Content {}
 extension BattleTurn: Parameter {}
 
 struct BattleTurnDetail: Content {
+    let id: Int?
     let turnNumber: Int
     let heroId: Int
     let userId: Int

@@ -13,7 +13,7 @@ struct BattleAction: PostgreSQLModel {
     var id: Int?
     let turnId: Int
     let battleId: Int
-    let actionId: String
+    let actionId: Int
     let actionInfo: String
     let actionIndex: Int
     let actionType: Int
@@ -40,7 +40,7 @@ extension BattleAction: Content {}
 extension BattleAction: Parameter {}
 
 struct BattleActionDetail: Content {
-    let actionId: String
+    let actionId: Int
     let actionInfo: String
     let actionIndex: Int
     let actionType: Int
@@ -50,7 +50,7 @@ struct CreateBattleAction: Content {
     
     let battleId: Int
     let turnId: Int
-    let actionId: String
+    let actionId: Int
     let actionInfo: String
     let actionIndex: Int
     let actionType: Int

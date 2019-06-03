@@ -26,9 +26,11 @@ final class BattleController: BaseController {
             let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError, reason: "No user with id: \(battle.defenderId)")).map { BattleUser(id: $0.id, name: $0.name, heroInits: defenderHeroInits) }.wait()
             
             let turns = try BattleTurn.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
+//            let actions = try BattleAction.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
             
-            let turnsDetail: [BattleTurnDetail] = try turns.map { turn in
-                let actions = try BattleAction.query(on: request).filter(\.id, .equal, turn.id).all().wait()
+            let turnsDetail: [BattleTurnDetail] = try turns.compactMap { turn in
+                guard let turnId = turn.id else { return nil }
+                let actions = try BattleAction.query(on: request).filter(\.turnId, .equal, turnId).all().wait()
                 return turn.with(actions: actions)
             }
             
