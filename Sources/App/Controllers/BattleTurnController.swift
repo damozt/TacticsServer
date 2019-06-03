@@ -27,8 +27,7 @@ final class BattleTurnController: BaseController {
             // TODO: make sure heroId exists in db
             battle.updateTime = Date().timeIntervalSince1970
             _ = battle.update(on: request)
-            let newTurn = BattleTurn.new(from: data, userId: userId)
-            _ = newTurn.save(on: request)
+            let newTurn = try BattleTurn.new(from: data, userId: userId).save(on: request).wait()
             return DataResponse<BattleTurn>(data: newTurn)
         }
     }
