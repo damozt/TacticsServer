@@ -32,6 +32,7 @@ extension BattleAction: Migration {
         return Database.create(self, on: conn) { (builder) in
             try addProperties(to: builder)
             builder.reference(from: \.turnId, to: \BattleTurn.id, onDelete: ._cascade)
+            builder.reference(from: \.battleId, to: \Battle.id, onDelete: ._cascade)
         }
     }
 }
