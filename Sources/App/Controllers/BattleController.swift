@@ -54,7 +54,15 @@ final class BattleController: BaseController {
                 let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, heroInits: attackerHeroInits) }.wait()
                 let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, heroInits: defenderHeroInits) }.wait()
                 
-                return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker, defender: defender, turns: nil)
+                let turns = try BattleTurn.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
+                
+                let turnsDetail: [BattleTurnDetail] = try turns.compactMap { turn in
+                    guard let turnId = turn.id else { return nil }
+                    let actions = try BattleAction.query(on: request).filter(\.turnId, .equal, turnId).all().wait()
+                    return turn.with(actions: actions)
+                }
+                
+                return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker, defender: defender, turns: turnsDetail)
                 
             }.sorted { $0.updateTime > $1.updateTime }
         }.map {
