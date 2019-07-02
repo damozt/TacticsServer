@@ -28,7 +28,7 @@ final class BattleController: BaseController {
             let turns = try BattleTurn.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
 //            let actions = try BattleAction.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
             
-            let turnsDetail: [BattleTurnDetail] = try turns.compactMap { turn in
+            let turnsDetail: [BattleTurnDetail] = try turns.sorted(by: { $0.turnNumber < $1.turnNumber } ).compactMap { turn in
                 guard let turnId = turn.id else { return nil }
                 let actions = try BattleAction.query(on: request).filter(\.turnId, .equal, turnId).all().wait()
                 return turn.with(actions: actions)
@@ -56,7 +56,7 @@ final class BattleController: BaseController {
                 
                 let turns = try BattleTurn.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
                 
-                let turnsDetail: [BattleTurnDetail] = try turns.compactMap { turn in
+                let turnsDetail: [BattleTurnDetail] = try turns.sorted(by: { $0.turnNumber < $1.turnNumber } ).compactMap { turn in
                     guard let turnId = turn.id else { return nil }
                     let actions = try BattleAction.query(on: request).filter(\.turnId, .equal, turnId).all().wait()
                     return turn.with(actions: actions)
