@@ -39,7 +39,7 @@ final class BattleController: BaseController {
         }
     }
     
-    func getUserBattles(_ req: Request) throws -> Future<DataResponse<[BattleDetail]>> {
+    func getUserBattles(_ req: Request) throws -> Future<[BattleDetail]> {
         
         return req.dispatch { request in
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
@@ -65,9 +65,10 @@ final class BattleController: BaseController {
                 return BattleDetail(id: battle.id, updateTime: battle.updateTime, stageId: battle.stageId, attacker: attacker, defender: defender, turns: turnsDetail)
                 
             }.sorted { $0.updateTime > $1.updateTime }
-        }.map {
-            return DataResponse<[BattleDetail]>(data: $0)
         }
+//        .map {
+//            return DataResponse<[BattleDetail]>(data: $0)
+//        }
     }
     
     func createBattle(_ req: Request, data: CreateBattle) throws -> Future<DataResponse<Battle>> {
