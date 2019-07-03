@@ -66,9 +66,6 @@ final class BattleController: BaseController {
                 
             }.sorted { $0.updateTime > $1.updateTime }
         }
-//        .map {
-//            return DataResponse<[BattleDetail]>(data: $0)
-//        }
     }
     
     func createBattle(_ req: Request, data: CreateBattle) throws -> Future<DataResponse<Battle>> {
