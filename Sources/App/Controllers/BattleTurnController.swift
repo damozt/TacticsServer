@@ -18,7 +18,7 @@ final class BattleTurnController: BaseController {
         }
     }
     
-    func createTurn(_ req: Request, data: CreateBattleTurn) throws -> Future<DataResponse<BattleTurn>> {
+    func createTurn(_ req: Request, data: CreateBattleTurn) throws -> Future<BattleTurn> {
         
         return req.dispatch { request in
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
@@ -28,7 +28,7 @@ final class BattleTurnController: BaseController {
             battle.updateTime = Date().timeIntervalSince1970
             _ = battle.update(on: request)
             let newTurn = try BattleTurn.new(from: data, userId: userId).save(on: request).wait()
-            return DataResponse<BattleTurn>(data: newTurn)
+            return newTurn
         }
     }
 }
