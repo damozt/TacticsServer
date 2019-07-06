@@ -12,8 +12,8 @@ import FluentPostgreSQL
 
 final class UserController: BaseController {
     
-    func getUser(_ req: Request) throws -> Future<PublicUser> {
-        return try authenticatedUser(req).map { $0.publicUser }
+    func getUser(_ req: Request) throws -> Future<DataResponse<PublicUser>> {
+        return try authenticatedUser(req).map { $0.publicUser }.map { DataResponse<PublicUser>(data: $0) }
     }
     
     func getAllUsers(_ req: Request) throws -> Future<DataResponse<[PublicUser]>> {
