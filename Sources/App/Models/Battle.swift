@@ -11,7 +11,7 @@ import FluentPostgreSQL
 struct Battle: PostgreSQLModel {
     var id: Int?
     var updateTime: TimeInterval
-    let stageId: String
+    let stageId: Int
     let attackerId: Int
     let defenderId: Int
     
@@ -31,7 +31,7 @@ extension Battle: Content {}
 extension Battle: Parameter {}
 
 struct CreateBattle: Content {
-    let stageId: String
+    let stageId: Int
     let attackerId: Int
     let defenderId: Int
 }
@@ -39,7 +39,7 @@ struct CreateBattle: Content {
 struct BattleDetail: Content {
     var id: Int?
     var updateTime: TimeInterval
-    let stageId: String
+    let stageId: Int
     let attacker: BattleUser?
     let defender: BattleUser?
     let turns: [BattleTurnDetail]?
