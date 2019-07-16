@@ -19,21 +19,24 @@ final class BattleActionController: BaseController {
     }
     
     func createAction(_ req: Request, data: CreateBattleAction) throws -> Future<DataResponse<BattleAction>> {
-        guard let _ = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
-        
-        return Battle.find(data.battleId, on: req).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).map { battle in
-//            battle.updateTime = Date().timeIntervalSince1970
-//            _ = battle.update(on: req)
-            let newAction = BattleAction.new(from: data)
-            _ = newAction.save(on: req)
+        return req.dispatch { request in
+            guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }
             
-            if newAction.actionType == 3 {
+            let battle = try Battle.find(data.battleId, on: request).unwrap(or: Abort(.badRequest, reason: "Battle with id: \(data.battleId) doesn't exist")).wait()
+            
+            let newAction = BattleAction.new(from: data)
+            _ = newAction.save(on: request)
+            
+            let opponentId = userId == battle.attackerId ? battle.defenderId : battle.attackerId
+            let user = try User.find(opponentId, on: request).unwrap(or: Abort(.internalServerError)).wait()
+            
+            if newAction.actionType == 2 {
                 FCM(
-                    to: "eCnb9l-4H1M:APA91bExdyCyiF2jaN9MPv0_cDaV67aK8TcZeVGyECIXEgDCYQiNpckX6VXyv9ZIslyYSR3Az9mWYwRyZd2ogqb69auXisjjEe3LDlXWmnJHSvnTQVVVSfsjIXRJLWP7NONEabhr9nRE",
+                    to: user.fcmId,
                     title: "For Glory",
                     body: "It's your turn!",
                     battleId: data.battleId
-                ).send()
+                    ).send()
             }
             
             return DataResponse<BattleAction>(data: newAction)

@@ -12,7 +12,7 @@ class FCM {
     #if DEBUG
     let apiKey = "AIzaSyCwjKMv7kuyTh5X3bHzjYXYY416uF2W2Tw"
     #else
-    let apiKey = "TODO"
+    let apiKey = "AIzaSyCwjKMv7kuyTh5X3bHzjYXYY416uF2W2Tw"
     #endif
     
     struct FCMMessage: Encodable {
