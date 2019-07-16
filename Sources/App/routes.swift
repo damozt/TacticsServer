@@ -12,6 +12,7 @@ public func routes(_ router: Router) throws {
     router.get("hero", Int.parameter, use: heroController.getHero)
     router.get("hero", use: heroController.getUserHeroes)
     router.post(CreateHero.self, at: "hero", use: heroController.createHero)
+    //update fcmId
     
     let battleController = BattleController()
     router.get("battle", Int.parameter, use: battleController.getBattle)

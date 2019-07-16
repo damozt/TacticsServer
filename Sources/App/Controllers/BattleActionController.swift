@@ -33,7 +33,7 @@ final class BattleActionController: BaseController {
             if newAction.actionType == 2 {
                 FCM(
                     to: user.fcmId,
-                    title: "For Glory",
+                    title: nil,
                     body: "It's your turn!",
                     battleId: data.battleId
                     ).send()
