@@ -28,7 +28,12 @@ final class BattleActionController: BaseController {
             _ = newAction.save(on: req)
             
             if newAction.actionType == 3 {
-                print("send notification telling the other user it is their turn!")
+                FCM(
+                    to: "eCnb9l-4H1M:APA91bExdyCyiF2jaN9MPv0_cDaV67aK8TcZeVGyECIXEgDCYQiNpckX6VXyv9ZIslyYSR3Az9mWYwRyZd2ogqb69auXisjjEe3LDlXWmnJHSvnTQVVVSfsjIXRJLWP7NONEabhr9nRE",
+                    title: "For Glory",
+                    body: "It's your turn!",
+                    battleId: data.battleId
+                ).send()
             }
             
             return DataResponse<BattleAction>(data: newAction)
