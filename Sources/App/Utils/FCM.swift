@@ -25,7 +25,6 @@ class FCM {
     struct FCMNotification: Encodable {
         let title: String?
         let body: String?
-        let badge: Int
         let click_action: String
         let sound: String
     }
@@ -37,7 +36,7 @@ class FCM {
     let message: FCMMessage
     
     init(to: String, title: String?, body: String, battleId: Int) {
-        let notification = FCMNotification(title: title, body: body, badge: 1, click_action: "goToBattle", sound: "battle")
+        let notification = FCMNotification(title: title, body: body, click_action: "goToBattle", sound: "battle")
         let data = BattleNotificationData(battleId: battleId)
         self.message = FCMMessage(to: to, notification: notification, data: data, priority: "normal")
     }
