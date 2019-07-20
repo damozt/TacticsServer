@@ -12,6 +12,10 @@ import FluentPostgreSQL
 
 final class UserController: BaseController {
     
+    override var rootPathString: String {
+        return "user"
+    }
+    
     func getUser(_ req: Request) throws -> Future<DataResponse<PublicUser>> {
         return try authenticatedUser(req).map { $0.publicUser }.map { DataResponse<PublicUser>(data: $0) }
     }

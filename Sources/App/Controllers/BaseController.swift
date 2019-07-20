@@ -10,12 +10,16 @@ import FluentPostgreSQL
 
 class BaseController {
     
+    var rootPathString: String {
+        return "base"
+    }
+    
     func authenticatedUser(_ req: Request) throws -> Future<User> {
         guard let firebaseUser = try authenticatedFirebaseUser(req) else { throw Abort(.unauthorized) }
         let users = User.query(on: req).filter(\.firebaseId, .equal, firebaseUser.sub).all()
         return users.map { users in
             guard users.count > 0 else { throw Abort(.noContent, reason: "No users found.") }
-            guard users.count == 1 else { throw Abort(.internalServerError) }
+            guard users.count == 1 else { throw Abort(.internalServerError, reason: "more than 1 user?") }
             return users[0]
         }
     }

@@ -11,6 +11,10 @@ import FluentPostgreSQL
 
 final class BattleController: BaseController {
     
+    override var rootPathString: String {
+        return "battle"
+    }
+    
     func getBattle(_ req: Request) throws -> Future<DataResponse<BattleDetail>> {
 //        guard let _ = try req.authenticate() else { throw Abort(.unauthorized) }
 

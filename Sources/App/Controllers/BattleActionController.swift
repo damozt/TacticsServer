@@ -10,6 +10,10 @@ import FluentPostgreSQL
 
 final class BattleActionController: BaseController {
     
+    override var rootPathString: String {
+        return "action"
+    }
+    
     func getActionsForBattle(_ req: Request) throws -> Future<DataResponse<[BattleAction]>> {
         return req.dispatch { request in
             let battleId = try request.parameters.next(Int.self)

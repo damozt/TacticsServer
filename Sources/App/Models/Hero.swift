@@ -12,13 +12,14 @@ struct Hero: PostgreSQLModel {
     
     var id: Int?
     let userId: Int
+    let type: Int
     var name: String
-    var type: Int
-    var actionIds: String
+    var exp: Int
+    var unlockedActionIds: String
     
-//    static func newHero(from hero: CreateHero) -> Battle {
-//        return Hero(id: nil, userId: hero.userId, name: hero.name, type: hero.type, actionIds: "[]")
-//    }
+    static func newHero(from hero: CreateHero) -> Hero {
+        return Hero(id: nil, userId: hero.userId, type: hero.type, name: hero.name, exp: 0, unlockedActionIds: "[]")
+    }
 }
 
 extension Hero: Migration {

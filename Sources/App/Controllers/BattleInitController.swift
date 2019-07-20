@@ -11,6 +11,10 @@ import FluentPostgreSQL
 
 final class BattleInitController: BaseController {
     
+    override var rootPathString: String {
+        return "battleInit"
+    }
+    
     func createBattleInit(_ req: Request, data: CreateBattleInit) throws -> Future<DataResponse<BattleInit>> {
         
         return req.dispatch { request in
