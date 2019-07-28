@@ -1,5 +1,5 @@
 //
-//  HeroCustomizationsController.swift
+//  HeroCustomizationController.swift
 //  App
 //
 //  Created by Kevin Damore on 7/20/19.
@@ -8,7 +8,7 @@
 import Vapor
 import FluentPostgreSQL
 
-final class HeroCustomizationsController: BaseController {
+final class HeroCustomizationController: BaseController {
     
     override var rootPathString: String {
         return "heroCustomization"
@@ -26,6 +26,26 @@ final class HeroCustomizationsController: BaseController {
         }
     }
     
+    func createHeroCustomization(_ req: Request) throws -> Future<DataResponse<HeroCustomization>> {
+        return req.dispatch { request in
+            var user = try self.authenticatedUser(request).wait()
+            
+            guard user.currency > Cost.newHeroCustomization else { throw Abort(.forbidden, reason: "User doesn't have enough gold (TODO: currency name?)") }
+            
+            let heroId = try request.parameters.next(Int.self)
+            
+            let heroCustomizations = try HeroCustomization.query(on: request).filter(\.heroId, .equal, heroId).all().wait()
+            guard heroCustomizations.count < 3 else { throw Abort(.forbidden, reason: "Cannot have more than 3 customizations") }
+            
+            let heroCustomization = try HeroCustomization.newHeroCustomization(for: heroId).save(on: request).wait()
+            
+            user.currency -= Cost.newHeroCustomization
+            _ = user.save(on: request)
+            
+            return DataResponse<HeroCustomization>(data: heroCustomization)
+        }
+    }
+    
     func updateHeroCustomization(_ req: Request, data: UpdateHeroCustomization) throws -> Future<DataResponse<HeroCustomization>> {
         return req.dispatch { request in
 
@@ -35,11 +55,13 @@ final class HeroCustomizationsController: BaseController {
             let hero = try Hero.find(data.heroId, on: request).unwrap(or: Abort(.forbidden, reason: "No hero exists with id: \(data.heroId)")).wait()
             guard hero.userId == user.id else { throw Abort(.forbidden, reason: "This user cannot update this hero customization") }
             
-            heroCustomization.equippedActionIds = data.equippedActionIds
+            heroCustomization.abilityIds = data.abilityIds
             heroCustomization.skinId = data.skinId
-            heroCustomization.rightHandId = data.rightHandId
-            heroCustomization.leftHandId = data.leftHandId
-            heroCustomization.accessoryId = data.accessoryId
+            heroCustomization.skinColor = data.skinColor
+            heroCustomization.hairStyleId = data.hairStyleId
+            heroCustomization.hairColor = data.hairColor
+            heroCustomization.mainHandId = data.mainHandId
+            heroCustomization.offHandId = data.offHandId
             
             let updatedHeroCustomization = try heroCustomization.save(on: request).wait()
             

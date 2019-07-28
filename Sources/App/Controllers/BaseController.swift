@@ -66,9 +66,9 @@ class BaseController {
             throw Abort(.unauthorized, reason: "Invalid Issued-at time")
         }
         
-        //    if Date(timeIntervalSince1970: firebaseUser.exp) < now {
-        //        throw Abort(.unauthorized, reason: "Token expired")
-        //    }
+        if Date(timeIntervalSince1970: firebaseUser.exp) < now {
+            throw Abort(.unauthorized, reason: "Token expired")
+        }
         
         if firebaseUser.aud != projectId {
             throw Abort(.unauthorized, reason: "Invalid Audience")

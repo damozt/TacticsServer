@@ -14,14 +14,6 @@ final class BattleActionController: BaseController {
         return "action"
     }
     
-    func getActionsForBattle(_ req: Request) throws -> Future<DataResponse<[BattleAction]>> {
-        return req.dispatch { request in
-            let battleId = try request.parameters.next(Int.self)
-            let actions = try BattleAction.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
-            return DataResponse<[BattleAction]>(data: actions)
-        }
-    }
-    
     func createAction(_ req: Request, data: CreateBattleAction) throws -> Future<DataResponse<BattleAction>> {
         return req.dispatch { request in
             guard let userId = try self.authenticatedUser(request).wait().id else { throw Abort(.unauthorized) }

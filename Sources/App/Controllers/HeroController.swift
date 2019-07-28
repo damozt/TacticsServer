@@ -48,7 +48,8 @@ final class HeroController: BaseController {
             guard !heroes.map({ $0.type }).contains(data.type) else { throw Abort(.forbidden, reason: "User already has a hero of this type.") }
             
             let hero = try Hero.newHero(from: data).save(on: request).wait()
-            _ = try HeroCustomization.newHeroCustomization(for: hero).save(on: request).wait()
+            guard let heroId = hero.id else { throw Abort(.internalServerError, reason: "Hero must have id.") }
+            _ = try HeroCustomization.newHeroCustomization(for: heroId).save(on: request).wait()
             
             return DataResponse<Hero>(data: hero)
         }

@@ -13,15 +13,17 @@ import FluentPostgreSQL
 struct HeroCustomization: PostgreSQLModel {
     
     var id: Int?
-    let heroId: Int?
-    var equippedActionIds: String
+    let heroId: Int
+    var abilityIds: String
     var skinId: Int
-    var leftHandId: Int
-    var rightHandId: Int
-    var accessoryId: Int
+    var skinColor: String
+    var hairStyleId: Int
+    var hairColor: String
+    var mainHandId: Int
+    var offHandId: Int
     
-    static func newHeroCustomization(for hero: Hero) -> HeroCustomization {
-        return HeroCustomization(id: nil, heroId: hero.id, equippedActionIds: "[]", skinId: 0, leftHandId: 0, rightHandId: 0, accessoryId: 0)
+    static func newHeroCustomization(for heroId: Int) -> HeroCustomization {
+        return HeroCustomization(id: nil, heroId: heroId, abilityIds: "[]", skinId: 0, skinColor: "FFFFFF", hairStyleId: 0, hairColor: "000000", mainHandId: 0, offHandId: 0)
     }
 }
 
@@ -45,9 +47,11 @@ struct UpdateHeroCustomization: Content {
     
     let id: Int
     let heroId: Int
-    let equippedActionIds: String
+    let abilityIds: String
     let skinId: Int
-    let leftHandId: Int
-    let rightHandId: Int
-    let accessoryId: Int
+    let skinColor: String
+    let hairStyleId: Int
+    let hairColor: String
+    let mainHandId: Int
+    let offHandId: Int
 }

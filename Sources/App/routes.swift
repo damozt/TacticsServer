@@ -7,16 +7,17 @@ public func routes(_ router: Router) throws {
     router.get(userController.rootPathString, "all", use: userController.getAllUsers)
     router.get(userController.rootPathString, "search", use: userController.findUsersWithName)
     router.post(CreateUser.self, at: userController.rootPathString, use: userController.createUser)
+    //update fcmId
     
     let heroController = HeroController()
     router.get(heroController.rootPathString, Int.parameter, use: heroController.getHero)
     router.get(heroController.rootPathString, use: heroController.getUserHeroes)
-    router.post(CreateHero.self, at: userController.rootPathString, use: heroController.createHero)
-    //update fcmId
+    router.post(CreateHero.self, at: heroController.rootPathString, use: heroController.createHero)
     
-    let heroCustomizationsController = HeroCustomizationsController()
-    router.get(heroCustomizationsController.rootPathString, Int.parameter, use: heroCustomizationsController.getHeroCustomizations)
-    router.put(UpdateHeroCustomization.self, at: heroCustomizationsController.rootPathString, use: heroCustomizationsController.updateHeroCustomization)
+    let heroCustomizationController = HeroCustomizationController()
+    router.get(heroCustomizationController.rootPathString, Int.parameter, use: heroCustomizationController.getHeroCustomizations)
+    router.post(heroCustomizationController.rootPathString, Int.parameter, use: heroCustomizationController.createHeroCustomization)
+    router.put(UpdateHeroCustomization.self, at: heroCustomizationController.rootPathString, use: heroCustomizationController.updateHeroCustomization)
     
     let battleController = BattleController()
     router.get(battleController.rootPathString, Int.parameter, use: battleController.getBattle)
@@ -27,11 +28,9 @@ public func routes(_ router: Router) throws {
     router.post(CreateBattleInit.self, at: battleInitController.rootPathString, use: battleInitController.createBattleInit)
     
     let battleTurnController = BattleTurnController()
-    router.get(battleTurnController.rootPathString, "battle", Int.parameter, use: battleTurnController.getTurnsForBattle)
     router.post(CreateBattleTurn.self, at: battleTurnController.rootPathString, use: battleTurnController.createTurn)
     
     let battleActionController = BattleActionController()
-    router.get(battleActionController.rootPathString, "battle", Int.parameter, use: battleActionController.getActionsForBattle)
     router.post(CreateBattleAction.self, at: battleActionController.rootPathString, use: battleActionController.createAction)
     
     //GET       challenge
