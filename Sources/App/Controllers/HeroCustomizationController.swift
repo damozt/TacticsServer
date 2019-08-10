@@ -55,13 +55,10 @@ final class HeroCustomizationController: BaseController {
             let hero = try Hero.find(data.heroId, on: request).unwrap(or: Abort(.forbidden, reason: "No hero exists with id: \(data.heroId)")).wait()
             guard hero.userId == user.id else { throw Abort(.forbidden, reason: "This user cannot update this hero customization") }
             
-            heroCustomization.abilityIds = data.abilityIds
-            heroCustomization.skinId = data.skinId
-            heroCustomization.skinColor = data.skinColor
-            heroCustomization.hairStyleId = data.hairStyleId
-            heroCustomization.hairColor = data.hairColor
-            heroCustomization.mainHandId = data.mainHandId
-            heroCustomization.offHandId = data.offHandId
+            heroCustomization.action0Id = data.action0Id
+            heroCustomization.action1Id = data.action1Id
+            heroCustomization.action2Id = data.action2Id
+            heroCustomization.action3Id = data.action3Id
             
             let updatedHeroCustomization = try heroCustomization.save(on: request).wait()
             

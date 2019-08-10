@@ -14,16 +14,20 @@ struct HeroCustomization: PostgreSQLModel {
     
     var id: Int?
     let heroId: Int
-    var abilityIds: String
-    var skinId: Int
-    var skinColor: String
-    var hairStyleId: Int
-    var hairColor: String
-    var mainHandId: Int
-    var offHandId: Int
+    var action0Id: Int?
+    var action1Id: Int?
+    var action2Id: Int?
+    var action3Id: Int?
     
     static func newHeroCustomization(for heroId: Int) -> HeroCustomization {
-        return HeroCustomization(id: nil, heroId: heroId, abilityIds: "[]", skinId: 0, skinColor: "FFFFFF", hairStyleId: 0, hairColor: "000000", mainHandId: 0, offHandId: 0)
+        return HeroCustomization(
+            id: nil,
+            heroId: heroId,
+            action0Id: nil,
+            action1Id: nil,
+            action2Id: nil,
+            action3Id: nil
+        )
     }
 }
 
@@ -47,11 +51,8 @@ struct UpdateHeroCustomization: Content {
     
     let id: Int
     let heroId: Int
-    let abilityIds: String
-    let skinId: Int
-    let skinColor: String
-    let hairStyleId: Int
-    let hairColor: String
-    let mainHandId: Int
-    let offHandId: Int
+    let action0Id: Int?
+    let action1Id: Int?
+    let action2Id: Int?
+    let action3Id: Int?
 }
