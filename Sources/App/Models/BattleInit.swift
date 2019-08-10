@@ -15,9 +15,48 @@ struct BattleInit: PostgreSQLModel {
     let heroId: Int
     let heroName: String
     let heroType: Int
-    let actionIds: String
+    let action0Id: Int?
+    let action1Id: Int?
+    let action2Id: Int?
+    let action3Id: Int?
     let direction: Int
     let tileId: Int
+    
+    init(id: Int?, battleId: Int, userId: Int, heroId: Int, heroName: String, heroType: Int, action0Id: Int?, action1Id: Int?, action2Id: Int?, action3Id: Int?, direction: Int, tileId: Int) {
+        self.id = id
+        self.battleId = battleId
+        self.userId = userId
+        self.heroId = heroId
+        self.heroName = heroName
+        self.heroType = heroType
+        self.action0Id = action0Id
+        self.action1Id = action1Id
+        self.action2Id = action2Id
+        self.action3Id = action3Id
+        self.direction = direction
+        self.tileId = tileId
+    }
+    
+    init(with id: Int?, userId: Int, data: CreateBattleInit) {
+        self.init(id: id, battleId: data.battleId, userId: userId, heroId: data.heroId, heroName: data.heroName, heroType: data.heroType, action0Id: data.action0Id, action1Id: data.action1Id, action2Id: data.action2Id, action3Id: data.action3Id, direction: data.direction, tileId: data.tileId)
+    }
+    
+//    static func battleInit(with id: Int?, userId: Int, data: CreateBattleInit) -> BattleInit {
+//        return BattleInit(
+//            id: id,
+//            battleId: data.battleId,
+//            userId: userId,
+//            heroId: data.heroId,
+//            heroName: data.heroName,
+//            heroType: data.heroType,
+//            action0Id: data.action0Id,
+//            action1Id: data.action1Id,
+//            action2Id: data.action2Id,
+//            action3Id: data.action3Id,
+//            direction: data.direction,
+//            tileId: data.tileId
+//        )
+//    }
 }
 
 extension BattleInit: Migration {
@@ -36,7 +75,10 @@ struct CreateBattleInit: Content {
     let heroId: Int
     let heroName: String
     let heroType: Int
-    let actionIds: String
+    let action0Id: Int?
+    let action1Id: Int?
+    let action2Id: Int?
+    let action3Id: Int?
     let direction: Int
     let tileId: Int
 }
@@ -45,7 +87,10 @@ struct BattleInitDetail: Content {
     let heroId: Int
     let heroName: String
     let heroType: Int
-    let actionIds: [Int]
+    let action0Id: Int?
+    let action1Id: Int?
+    let action2Id: Int?
+    let action3Id: Int?
     let direction: Int
     let tileId: Int
     
@@ -53,7 +98,10 @@ struct BattleInitDetail: Content {
         heroId = battleInit.heroId
         heroName = battleInit.heroName
         heroType = battleInit.heroType
-        actionIds = (try? JSONDecoder().decode([Int].self, from: battleInit.actionIds.data(using: .utf8) ?? "")) ?? []
+        action0Id = battleInit.action0Id
+        action1Id = battleInit.action1Id
+        action2Id = battleInit.action2Id
+        action3Id = battleInit.action3Id
         direction = battleInit.direction
         tileId = battleInit.tileId
     }

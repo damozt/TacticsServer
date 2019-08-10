@@ -48,6 +48,8 @@ struct BattleDetail: Content {
 struct BattleUser: Content {
     let id: Int?
     let name: String
+    let color1: String
+    let color2: String
     let heroInits: [BattleInitDetail]
 }
 
@@ -55,32 +57,7 @@ struct HeroInit: Content {
     let heroId: Int
     let name: String
     let type: Int
-    let actionIds: String
+    let actionIds: String //TODO: update to have the 4/8 actionIds
     let tileId: Int
     let direction: Int
 }
-
-struct HeroInitDetail: Content {
-    let heroId: Int
-    let name: String
-    let type: Int
-    let actionIds: [Int]
-    let tileId: Int
-    let direction: Int
-    
-    init?(heroInit: HeroInit) {
-        heroId = heroInit.heroId
-        name = heroInit.name
-        type = heroInit.type
-        actionIds = (try? JSONDecoder().decode([Int].self, from: heroInit.actionIds.data(using: .utf8) ?? "")) ?? []
-        tileId = heroInit.tileId
-        direction = heroInit.direction
-    }
-}
-
-struct TeamInit: Content {
-    let data: String
-}
-
-//attacker: [{"heroId":1,"name":"Test","type":0,"actionIds":"[1,100,1000]","tileId":52,"direction":0}]
-//defender: [{"heroId":2,"name":"Ramza","type":0,"actionIds":"[1,100,1000]","tileId":50,"direction":0}]

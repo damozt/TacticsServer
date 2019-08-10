@@ -26,8 +26,8 @@ final class BattleController: BaseController {
             let attackerHeroInits = heroInits.filter { $0.userId == battle.attackerId }.compactMap { BattleInitDetail(battleInit: $0) }
             let defenderHeroInits = heroInits.filter { $0.userId == battle.defenderId }.compactMap { BattleInitDetail(battleInit: $0) }
 
-            let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError, reason: "No user with id: \(battle.attackerId)")).map { BattleUser(id: $0.id, name: $0.name, heroInits: attackerHeroInits) }.wait()
-            let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError, reason: "No user with id: \(battle.defenderId)")).map { BattleUser(id: $0.id, name: $0.name, heroInits: defenderHeroInits) }.wait()
+            let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError, reason: "No user with id: \(battle.attackerId)")).map { BattleUser(id: $0.id, name: $0.name, color1: $0.color1, color2: $0.color2, heroInits: attackerHeroInits) }.wait()
+            let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError, reason: "No user with id: \(battle.defenderId)")).map { BattleUser(id: $0.id, name: $0.name, color1: $0.color1, color2: $0.color2, heroInits: defenderHeroInits) }.wait()
 
             let turns = try BattleTurn.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
 //            let actions = try BattleAction.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
@@ -55,8 +55,8 @@ final class BattleController: BaseController {
                 let attackerHeroInits = heroInits.filter { $0.userId == battle.attackerId }.compactMap { BattleInitDetail(battleInit: $0) }
                 let defenderHeroInits = heroInits.filter { $0.userId == battle.defenderId }.compactMap { BattleInitDetail(battleInit: $0) }
                 
-                let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, heroInits: attackerHeroInits) }.wait()
-                let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, heroInits: defenderHeroInits) }.wait()
+                let attacker = try User.find(battle.attackerId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, color1: $0.color1, color2: $0.color2, heroInits: attackerHeroInits) }.wait()
+                let defender = try User.find(battle.defenderId, on: request).unwrap(or: Abort(.internalServerError)).map { BattleUser(id: $0.id, name: $0.name, color1: $0.color1, color2: $0.color2, heroInits: defenderHeroInits) }.wait()
                 
                 let turns = try BattleTurn.query(on: request).filter(\.battleId, .equal, battleId).all().wait()
                 
